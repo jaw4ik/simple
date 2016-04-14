@@ -7,13 +7,13 @@
     }
 });
 
-define('jquery', function () { return jQuery; });
-define('knockout', function () { return ko; });
-define('WebFont', function () { return WebFont; });
+define('jquery', function() { return jQuery; });
+define('knockout', function() { return ko; });
+define('WebFont', function() { return WebFont; });
 
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/router', 'modulesInitializer', 'bootstrapper', 'templateSettings', 'settingsReader', 'translation', 'modules/webFontLoaderProvider'],
-    function(app, viewLocator, system,router ,modulesInitializer, bootstrapper, templateSettings, settingsReader, translation, webFontLoader) {
+    function(app, viewLocator, system, router, modulesInitializer, bootstrapper, templateSettings, settingsReader, translation, webFontLoader) {
         app.title = 'easygenerator';
 
         system.debug(false);
@@ -30,12 +30,14 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/rout
 
             var modules = {};
 
-            modules['modules/localStorage_progressProvider'] = true;
+            if (location.href.indexOf('/preview/') === -1) {
+                modules['modules/localStorage_progressProvider'] = true;
+            }
 
             return readPublishSettings().then(function() {
                 return readTemplateSettings().then(function(settings) {
-                    return initTemplateSettings(settings).then(function () {
-                        return webFontLoader.init(settings.fonts).then(function(){
+                    return initTemplateSettings(settings).then(function() {
+                        return webFontLoader.init(settings.fonts).then(function() {
                             return initTranslations(settings).then(function() {
                                 modulesInitializer.register(modules);
                                 app.setRoot('viewmodels/shell');
@@ -61,18 +63,18 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/rout
             }
 
             function initTemplateSettings(settings) {
-                return templateSettings.init(settings).then(function () {
-                    if(isXapiDisabled()){
-						templateSettings.xApi.enabled = false;
-					}
+                return templateSettings.init(settings).then(function() {
+                    if (isXapiDisabled()) {
+                        templateSettings.xApi.enabled = false;
+                    }
                     modules['xApi/xApiInitializer'] = templateSettings.xApi;
                 });
             }
-			
-			function isXapiDisabled(){
-				var xapi = router.getQueryStringValue('xapi');
-				return !templateSettings.xApi.required && !_.isNullOrUndefined(xapi) && xapi.toLowerCase() === 'false';
-			}
+
+            function isXapiDisabled() {
+                var xapi = router.getQueryStringValue('xapi');
+                return !templateSettings.xApi.required && !_.isNullOrUndefined(xapi) && xapi.toLowerCase() === 'false';
+            }
 
             function initTranslations(settings) {
                 return translation.init(settings.languages.selected, settings.languages.customTranslations);
