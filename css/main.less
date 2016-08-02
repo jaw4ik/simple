@@ -267,7 +267,7 @@ ul {
     line-height: 1.5;
 
     &:first-child{
-        margin-top: 20px;
+        margin-top: 30px;
     }
 
     &:not(:last-child){
@@ -495,27 +495,31 @@ ul {
     }
     .image-wrapper {
         text-align: center;
-        margin-bottom: 20px;
         display: block;
-        margin: 20px;
+        margin: 20px 0;
         max-width: 100%;
         clear: both;
         &[style*="float:left"],
         &[style*="float: left"] {
-            margin: 20px 25px 20px 0;
+            margin-right: 25px;
         }
         &[style*="float:right"],
         &[style*="float: right"] {
-            margin: 20px 0 20px 25px;
+            margin-left: 25px;
         }
         img {
-            border-radius: 5px;
+            border-radius: 3px;
             max-width: 100%;
         }
     }
 
     .image-wrapper ~ .image-wrapper {
         clear: none;
+    }
+
+    .cropped-image {
+        border-radius: 3px;
+        z-index: 1;
     }
 
     iframe {
@@ -538,27 +542,22 @@ ul {
 /*#region eg-content-editor*/
  
  .eg-content-editor {
+     margin: 15px 0;
+
      .column {
-         /* two items */
-         &:nth-child(1):nth-last-child(2) {
-             padding: 0 15px 0 0;
+         padding: 0 20px;
+
+         &:first-child {
+             padding-left: 0;
          }
  
-         &:nth-child(2):nth-last-child(1) {
-             padding: 0 0 0 15px;
+         &:last-child {
+             padding-right: 0;
          }
-         /* three items */
-         &:nth-child(1):nth-last-child(3) {
-             padding: 0 20px 0 0;
-         }
- 
-         &:nth-child(2):nth-last-child(2) {
-             padding: 0 10px 0 10px;
-         }
- 
-         &:nth-child(3):nth-last-child(1) {
-             padding: 0 0 0 20px;
-         }
+     }
+
+     .image-wrapper {
+         margin: 0; 
      }
  }
  
@@ -3602,8 +3601,11 @@ form {
     border-bottom-width: 1px;
 
     .material-icons {
-        vertical-align: bottom;
         margin-right: 4px;
+    }
+
+    span {
+        vertical-align: middle;
     }
 }
 
@@ -4393,7 +4395,6 @@ form {
                             margin-right: 7px;
                             font-size: 18px;
                             max-width: 18px; /*fix for android 4.0*/
-                            margin-top: 3px;
                             z-index: 10;
                         }
 

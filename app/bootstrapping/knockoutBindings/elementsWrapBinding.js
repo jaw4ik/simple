@@ -19,6 +19,10 @@
             var $image = $(image),
                 $wrapper = $(imageWrapper).css('float', $image[0].style.cssFloat);
 
+            if ($image.closest('.cropped-image').length > 0) {
+                return;
+            }
+
             // moved to css, because of IE11 crash on Windows 10 => .image-wrapper img {height:auto!important;float:none!important;}
             //$image.height('auto');
             //$image.css('float', 'none');
