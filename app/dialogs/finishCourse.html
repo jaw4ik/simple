@@ -11,25 +11,36 @@
                 <section>
                     <ul>
                         <!-- ko if: finish -->
+                        <!-- ko if: xAPIEnabled || scormEnabled -->
                         <li data-translate-text="[finish course submit first remark]"></li>
+                        <!-- /ko -->
                         <li data-translate-text="[finish course submit second remark]"></li>
                         <!-- /ko -->
                     </ul>
                 </section>
+                <!-- ko if: crossDeviceEnabled && !scormEnabled -->
                 <button class="button check small mb10" type="submit" data-bind="click: toggleStayLoggedIn, css: { active: stayLoggedIn }">
                     <span data-translate-text="[keep me logged-in for the next courses]" data-translate-title="[keep me logged-in for the next courses]"></span>
                 </button>
+                <!-- /ko -->
                 <footer>
                     <span class="button-wrapper">
                         <button class="button block default" data-bind="click: close" data-translate-text="[cancel, continue course]" data-translate-title="[cancel, continue course]"></button>
                     </span>
                     <!-- ko if: finish -->
                     <span class="button-wrapper" data-bind="autofocus">
-                        <!-- ko if: stayLoggedIn -->                    
-                        <button class="button block primary autofocus" data-bind="click: finish" data-translate-text="[OK, submit results]" data-translate-title="[OK, submit results]"></button>
+                        <!-- ko if: !xAPIEnabled && !scormEnabled -->
+                        <button class="button block primary autofocus" data-bind="click: finish"
+                                data-translate-text="[ok finish course]"
+                                data-translate-title="[ok finish course]"></button>
                         <!-- /ko -->
-                        <!-- ko ifnot: stayLoggedIn -->                    
-                        <button class="button block primary autofocus" data-bind="click: finish" data-translate-text="[OK, submit results and log out]" data-translate-title="[OK, submit results and log out]"></button>
+                        <!-- ko if: xAPIEnabled || scormEnabled -->
+                            <!-- ko if: stayLoggedIn -->                    
+                            <button class="button block primary autofocus" data-bind="click: finish" data-translate-text="[OK, submit results]" data-translate-title="[OK, submit results]"></button>
+                            <!-- /ko -->
+                            <!-- ko ifnot: stayLoggedIn -->                    
+                            <button class="button block primary autofocus" data-bind="click: finish" data-translate-text="[OK, submit results and log out]" data-translate-title="[OK, submit results and log out]"></button>
+                            <!-- /ko -->
                         <!-- /ko -->
                     </span>
                     <!-- /ko -->

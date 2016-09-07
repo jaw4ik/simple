@@ -1,143 +1,67 @@
 <section id="login" class="unselectable" data-bind="autofocus">
     <!-- ko if: loginEnabled -->
-    <div data-bind="focusHandler: {}">
-        <header class="page-header">
-            <h1 class="course-title" data-bind="css: {small: courseTitle.length>100}">
-                <span class="course-label" data-translate-text="[course]">Course:</span>&nbsp;&#34;<span class="course-caption" data-bind="text: courseTitle, reviewable: {type: 'course', property: 'title'}">"course_name"</span>&#34;
-            </h1>
-        </header>
-    </div>
-    <!-- ko ifnot: userExists -->
-    <section class="content login">
-        <h2 data-translate-text="[login header]">Introduce yourself</h2>
-        <!-- ko if: progressStorageActivated && socialLoginAllowed -->
-        <form>
-            <div class="form-row center" data-bind="css: { error: !username.isValid() && username.isModified() }">
-                <h4 data-translate-text="[authorize with]"></h4>
-                <a href="#" class="social-networks-btn" data-bind="attr: { href: progressStorageUrl + 'auth/facebook?courseLink=' + encodeURIComponent(window.location.href) + '&courseTitle=' + encodeURIComponent(courseTitle) }">
-                    <span class="icon-facebook"></span>
-                </a>
-                <a href="#" class="social-networks-btn" data-bind="attr: { href: progressStorageUrl + 'auth/linkedin?courseLink=' + encodeURIComponent(window.location.href) + '&courseTitle=' + encodeURIComponent(courseTitle) }">
-                    <span class="icon-linkedin"></span>
-                </a>
-                <a href="#" class="social-networks-btn" data-bind="attr: { href: progressStorageUrl + 'auth/google?courseLink=' + encodeURIComponent(window.location.href) + '&courseTitle=' + encodeURIComponent(courseTitle) }">
-                    <span class="icon-google"></span>
-                </a>
-            </div>
-        </form>
-        <div class="or-separator">
-            <span class="or-separator-text" data-translate-text="[or]">or</span>
+        <div data-bind="focusHandler: {}">
+            <header class="page-header">
+                <h1 class="course-title" data-bind="css: {small: courseTitle.length>100}">
+                    <span class="course-label" data-translate-text="[course]">Course:</span>&nbsp;&#34;<span class="course-caption" data-bind="text: courseTitle, reviewable: {type: 'course', property: 'title'}">"course_name"</span>&#34;
+                </h1>
+            </header>
         </div>
-        <!-- /ko -->
-        <form class="h200" data-bind="css: { hidden: !useEmail(), shown: useEmail() }">
-            <div class="form-row mh75" data-bind="css: { error: !username.isValid() && username.isModified() }">
-                <input type="text" ondrop="return false;" data-bind="value: username, valueUpdate: 'afterkeydown',css: { empty: !username().length, autofocus: useEmail }, event: { blur: username.trim }, hasFocus: username.hasFocus">
-                <label data-translate-text="[login name field]">Your name</label>
-                <div class='error-message' data-bind="visible: !username.isValid() && username.isModified()" data-translate-text="[tracking and tracing name is not valid]"></div>
-            </div>
-            <div class="form-row mh75" data-bind="css: { error: !usermail.isValid() && usermail.isModified() }">
-                <input type="email" ondrop="return false;" data-bind="value: usermail, valueUpdate: 'afterkeydown',css:{empty:!usermail().length}, event: { blur: usermail.trim }, submitOnEnter: register">
-                <label data-translate-text="[login email field]">Your e-mail</label>
-                <span class="error-message" data-bind="visible: !usermail.isValid() && usermail.isModified()" data-translate-text="[tracking and tracing email is not valid]"></span>
-            </div>
-        </form>
-        <form>
-            <div class="form-row mw100 mh75 center">
-                <!-- ko ifnot: useEmail -->
-                <button class="button primary small w200 autofocus" data-bind="click: toggleUseEmail">
-                    <span data-translate-text="[login use e-mail]" data-translate-title="[login use e-mail]">Use e-mail</span>
-                </button>
-                <!-- /ko -->
-                <!-- ko if: useEmail -->
+        <!-- ko ifnot: userExists -->
+        <section class="content login">
+            <h2 data-translate-text="[login header]"></h2>
+            <!-- ko if: crossDeviceSavingEnabled && socialLoginEnabled -->
+                <!-- ko compose: socialLoginViewModel --><!-- /ko -->
+            <!-- /ko -->
+            <form class="h200" data-bind="css: { hidden: !useEmail(), shown: useEmail() }">
+                <div class="form-row mh75" data-bind="css: { error: !username.isValid() && username.isModified() }">
+                    <input type="text" ondrop="return false;" data-bind="value: username, valueUpdate: 'afterkeydown',css: { empty: !username().length, autofocus: useEmail }, event: { blur: username.trim }, hasFocus: username.hasFocus">
+                    <label data-translate-text="[login name field]">Your name</label>
+                    <div class='error-message' data-bind="visible: !username.isValid() && username.isModified()" data-translate-text="[tracking and tracing name is not valid]"></div>
+                </div>
+                <div class="form-row mh75" data-bind="css: { error: !usermail.isValid() && usermail.isModified() }">
+                    <input type="email" ondrop="return false;" data-bind="value: usermail, valueUpdate: 'afterkeydown',css:{empty:!usermail().length}, event: { blur: usermail.trim }, submitOnEnter: register">
+                    <label data-translate-text="[login email field]">Your e-mail</label>
+                    <span class="error-message" data-bind="visible: !usermail.isValid() && usermail.isModified()" data-translate-text="[tracking and tracing email is not valid]"></span>
+                </div>
+            </form>
+            <form>
+                <div class="form-row mw100 mh75 center">
+                    <!-- ko ifnot: useEmail -->
+                    <button class="button primary small w200 autofocus" data-bind="click: toggleUseEmail">
+                        <span data-translate-text="[login use e-mail]" data-translate-title="[login use e-mail]">Use e-mail</span>
+                    </button>
+                    <!-- /ko -->
+                    <!-- ko if: useEmail -->
 
-                <!-- ko if: progressStorageActivated -->
-                <button class="button check small w280" type="submit" data-bind="click: toggleStayLoggedIn, css: { active: stayLoggedIn }">
-                    <span data-translate-text="[remember me on this device]" data-translate-title="[remember me on this device]"></span>
-                </button>
-                <!-- /ko -->
-                <button class="button primary small important w280 pulsar-container autofocus" type="submit" data-bind="click: register, css: { processing: requestProcessing }">
-                    <!-- ko if: requestProcessing -->
-                    <div class="pulsar-loader align-center">
-                        <div class="pulsar-loader-item"></div>
-                        <div class="pulsar-loader-item"></div>
-                        <div class="pulsar-loader-item"></div>
-                    </div>
+                    <!-- ko if: crossDeviceSavingEnabled -->
+                    <button class="button check small w280" type="submit" data-bind="click: toggleRememberMe, css: { active: rememberMe }">
+                        <span data-translate-text="[remember me on this device]" data-translate-title="[remember me on this device]"></span>
+                    </button>
                     <!-- /ko -->
-                    <!-- ko ifnot: requestProcessing -->
-                    <span data-translate-text="[confirn your name and email]" data-translate-title="[confirn your name and email]">OK, name and email are correct</span>
+                    <button class="button primary small important w280 pulsar-container autofocus" type="submit" data-bind="click: register, css: { processing: requestProcessing }">
+                        <!-- ko if: requestProcessing -->
+                        <div class="pulsar-loader align-center">
+                            <div class="pulsar-loader-item"></div>
+                            <div class="pulsar-loader-item"></div>
+                            <div class="pulsar-loader-item"></div>
+                        </div>
+                        <!-- /ko -->
+                        <!-- ko ifnot: requestProcessing -->
+                        <span data-translate-text="[confirn your name and email]" data-translate-title="[confirn your name and email]">OK, name and email are correct</span>
+                        <!-- /ko -->
+                    </button>
                     <!-- /ko -->
-                </button>
-                <!-- /ko -->
-                <!-- ko if: allowToSkip() -->
-                <button class="button link" href="#" data-bind="click: skip" data-translate-text="[login skip]" data-translate-title="[login skip]">Skip step, start anonymously</button>
-                <!-- /ko -->
-            </div>
-        </form>
-        <footer data-translate-text="[login explanation]">
-            * By authorizing with any of the options above you agree to the fact that your results and scores will be stored. These results will only be visible to the organizer (author) of your course.
-        </footer>
-    </section>
-    <!-- /ko -->
-    <!-- ko if: userExists -->
-    <section class="content login password">
-        <div class="icon-container">
-            <span class="icon-user"></span>
-        </div>
-        <h3 data-translate-text="[enter your password to login as]"></h3>
-        <h4>
-            <span data-bind="text: username"></span>&nbsp;(<span data-bind="text: usermail"></span>)
-        </h4>
-        <form class="mb7 visible">
-            <div class="form-row mh75" data-bind="css: { error: !password.isValid() && password.isModified() }">
-                <input type="text" ondrop="return false;" data-bind="value: password, valueUpdate: 'afterkeydown',css:{empty:!password().length}, attr: { type: passwordHidden() ? 'password' : 'text' }, event: { blur: password.trim }">
-                <label>
-                    <span data-translate-text="[password]"></span>
-                    <span class="helper-tooltip-container">
-                        <span class="material-icons helper-tooltip">help_outline</span>
-                        <span class="helper-tooltip-text-container">
-                            <span class="helper-tooltip-text">
-                                This password was sent to your email(<span data-bind="text: usermail"></span>) previously
-                            </span>
-                            <span class="helper-tooltip-triangle"></span>
-                        </span>
-                    </span>
-                </label>
-                <div class='error-message' data-bind="visible: !password.isValid() && password.isModified()" data-translate-text="[login pasword is not valid]"></div>
-                <div class="error-message" data-bind="visible: passwordIsNotCorrect" data-translate-text="[login email / password combination is not valid]"></div>
-                <div tabindex="0" class="checkbox-container" data-bind="click: toglePasswordVisibility, submitOnEnter, css: { active: !passwordHidden() }">
-                    <span class="checkbox-box"></span>
-                    <span class="checkbox-text" data-translate-text="[show]"></span>
+                    <!-- ko if: skipAllowed -->
+                    <button class="button link" href="#" data-bind="click: skip" data-translate-text="[login skip]" data-translate-title="[login skip]">Skip step, start anonymously</button>
+                    <!-- /ko -->
                 </div>
-            </div>
-        </form>
-        <form class="visible">
-            <div class="form-row mh75 mt15 center">
-                <button class="button primary small w260 pulsar-container" data-bind="click: login">
-                    <!-- ko if: requestProcessing -->
-                    <div class="pulsar-loader align-center">
-                        <div class="pulsar-loader-item"></div>
-                        <div class="pulsar-loader-item"></div>
-                        <div class="pulsar-loader-item"></div>
-                    </div>
-                    <!-- /ko -->
-                    <!-- ko ifnot: requestProcessing -->
-                    <span data-translate-text="[continue with the password]" data-translate-title="[continue with the password]">Continue with the password</span>
-                    <!-- /ko -->
-                </button>
-                <span class="button link unhovered">
-                    <span data-translate-text="[or]">or</span>
-                    <a tabindex="0" data-bind="click: sendSecretLink, submitOnEnter" data-translate-text="[request a secret link]">request a secret link</a>
-                    <span data-translate-text="[to your progress via email]">to your progress via email</span>
-                </span>
-                <div class="secret-link-confirm-container" data-bind="css: { show: isSecretLinkSent }">
-                    <span class="secret-link-confirm-wrapper">
-                        <span class="icon-envelope"></span>
-                        <span class="secret-link-confirm-text" data-translate-text="[the letter has been successfully sent]" data-translate-title="[the letter has been successfully sent]"></span>
-                    </span>
-                </div>
-            </div>
-        </form>
-    </section>
-    <!-- /ko -->
+            </form>
+            <footer data-translate-text="[login explanation]"></footer>
+        </section>
+        <!-- /ko -->
+        <!-- ko if: userExists -->
+            <!-- ko compose: { model: checkPasswordViewModel, activationData: [username,usermail,rememberMe] } --><!-- /ko -->
+        <!-- /ko -->
     <!-- /ko -->
 </section>

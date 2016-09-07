@@ -1,99 +1,72 @@
-define(['durandal/app', 'q', 'userContext', './providers/progressProviders/localStorage', './providers/progressProviders/progressStorage', './providers/authProvider', './utils/urlProvider',
-        './commands/sendSecretLink', 'context', 'translation'
-    ],
-    function(app, Q, userContext, LocalStorageProvider, ProgressStorageProvider, authProvider, urlProvider, sendSecretLinkCommand, context, translation) {
-        'use strict';
+define([
+    'q', 'underscore', 'durandal/app', 'userContext', 'context', 'translation',
+    './providers/progressProviders/localStorage', './providers/progressProviders/progressStorage',
+    './providers/authProvider', './utils/urlProvider', './commands/sendSecretLink'
+], function(Q, _, app, userContext, context, translation, LocalStorageProvider, ProgressStorageProvider,
+    authProvider, urlProvider, sendSecretLinkCommand) {
+    'use strict';
 
-        function ProgressContext() {
-            var _private = {
-                progressProviders: [],
-                localStorageProvider: null,
-                progresStorageProvider: null,
-                getProgress: function() {
-                    return _private.localStorageProvider.getProgress();
-                },
-                saveProgress: function(progress) {
-                    return _private.callFunctionInEachProvider('saveProgress', progress, _private.userEmail);
-                },
-                saveResults: function() {
-                    return _private.callFunctionInEachProvider('saveResults', context.course.score, context.course.getStatus, translation.getTextByKey('[not enough memory to save progress]'));
-                },
-                removeProgress: function() {
-                    return _private.callFunctionInEachProvider('removeProgress', _private.userEmail);
-                },
-                createProviders: function (courseId, templateId){
-                    _private.localStorageProvider = new LocalStorageProvider(courseId, templateId);
-                    _private.progressProviders.push(_private.localStorageProvider);
-                    _private.progresStorageProvider = new ProgressStorageProvider(courseId, templateId);
-                    _private.progressProviders.push(_private.progresStorageProvider);
-                },
-                callFunctionInEachProvider: function(nameOfFunction) {
-                    var promises = [];
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    _.each(_private.progressProviders, function(progressProvider) {
-                        if (_.isFunction(progressProvider[nameOfFunction])) {
-                            promises.push(progressProvider[nameOfFunction].apply(progressProvider, args));
-                        }
-                    });
+    var _private = {
+        userEmail: '',
+        progressProviders: {
+            localStorage: null,
+            progressStorage: null,
+            create: function(crossDeviceSavingEnabled) {
+                this.localStorage = new LocalStorageProvider(context.course.id, context.course.templateId);
+                crossDeviceSavingEnabled && (this.progressStorage = new ProgressStorageProvider(context.course.id, context.course.templateId));
+            }
+        },
+        executeFuncInProviders: executeFuncInProviders,
+        progressProvider: {
+            getProgress: getProgress,
+            saveProgress: saveProgress,
+            saveResults: saveResults,
+            removeProgress: removeProgress
+        }
+    };
 
-                    return Q.all(promises);
-                },
-                userEmail: '',
-                courseTitle: '',
-                deleteProgressStorageProvider: function(){
-                   _private.progressProviders = _.reject(_private.progressProviders, function(progressProvider){
-                       return progressProvider instanceof ProgressStorageProvider;
-                   });
-                }
-            };
+    function ProgressContext() {
+        var that = this;
+        this.isOnline = true;
+        this.isInitialized = false;
+        this.progressProvider = _private.progressProvider;
+        this.crossDeviceEnabled = true;
 
-            this.isOnline = true;
-            this.isInitialized = false;
+        this.initialize = function(crossDeviceSavingEnabled) {
+            var defer = Q.defer();
 
-            this.progressProvider = {
-                getProgress: _private.getProgress,
-                saveProgress: _private.saveProgress,
-                saveResults: _private.saveResults,
-                removeProgress: _private.removeProgress
-            };
+            this.isInitialized = true;
+            this.crossDeviceEnabled = crossDeviceSavingEnabled;
+            _private.progressProviders.create(this.crossDeviceEnabled);
 
-            this.initialize = function(courseId, courseTitle, templateId) {
-                var defer = Q.defer();
-                this.isInitialized = true;
-                _private.courseTitle = courseTitle;
-                _private.createProviders(courseId, templateId);
-                if (authProvider.authenticated) {
+            if (crossDeviceSavingEnabled) {
+                var token = authProvider.getValueFromUrl('token');
+                if (!_.isNull(token)) {
+                    authProvider.setToken(token);
+                    this.syncProviders().then(resolvePromise).fail(defer.reject);
+                } else if (authProvider.authenticated) {
                     this.syncProviders().then(resolvePromise).fail(defer.reject);
                 } else {
-                    var token = authProvider.getValueFromUrl('token');
-                    if (!_.isNull(token)) {
-                        authProvider.setToken(token);
-                        this.syncProviders().then(resolvePromise).fail(defer.reject);
-                    } else {
-                        defer.resolve(null);
-                    }
+                    defer.resolve(null);
                 }
-                return defer.promise;
-                
-                function resolvePromise(user){
-                    defer.resolve(user)
-                }
-                function rejectPromise(){
-                    defer.reject();
-                }
-            };
+            } else {
+                defer.resolve(null);
+            }
 
-            this.deactivateProgressStorage = function() {
-                this.isInitialized = false;
-                _private.deleteProgressStorageProvider();
-            };
+            return defer.promise;
 
-            this.syncProviders = function() {
-                var that = this;
-                return _private.progresStorageProvider.getProgress().then(function(response) {
-                    if (_.isNull(response.progress) || _.isEmpty(response.progress)) {
-                        _private.localStorageProvider.removeProgress();
-                        if (response.email) {
+            function resolvePromise(user) {
+                defer.resolve(user)
+            }
+        };
+
+        this.syncProviders = function() {
+            var that = this;
+            return _private.progressProviders.progressStorage.getProgress()
+                .then(function(response) {
+                    if(_.isNull(response.progress) || _.isEmpty(response.progress)){
+                        _private.progressProviders.localStorage.removeProgress();
+                        if (response.email){
                             authenticate(response.email, response.name, true);
                             _private.userEmail = response.email;
                             return {
@@ -109,22 +82,23 @@ define(['durandal/app', 'q', 'userContext', './providers/progressProviders/local
                             email: response.email
                         };
                         authenticate(response.email, response.name);
-                        _private.localStorageProvider.saveProgress(progress);
+                        _private.progressProviders.localStorage.saveProgress(progress);
                         _private.userEmail = response.email;
                         return {
                             name: response.name,
                             email: response.email
                         };
                     }
-                }).fail(function(reason) {
+                })
+                .fail(function(reason) {
                     that.isOnline = false;
                     that.logOut();
-                    _private.deleteProgressStorageProvider();
+                    delete _private.progressProviders.progressStorage;
                     if (reason.status == 401) {
                         return null;
                     }
                 });
-                
+
                 function setSecretLink(email, title, sendMail){
                     sendMail = sendMail || false;
                     var shortLink = authProvider.getValueFromUrl('shortLink');
@@ -148,36 +122,70 @@ define(['durandal/app', 'q', 'userContext', './providers/progressProviders/local
                     userContext.user.username = name;
                     setSecretLink(email, _private.courseTitle, sendMail);
                 }
-            };
+        };
 
-            this.isUserAuthenticated = function() {
+        this.deactivateProgressStorage = function(){
+            this.isInitialized = false;
+            delete _private.progressProviders.progressStorage;
+        };
+
+        this.isUserAuthenticated = function() {
+            if(that.crossDeviceEnabled){
                 return authProvider.authenticated;
-            };
+            }
+            var progress = _private.progressProvider.getProgress();
+            return !_.isNull(progress) && !_.isNull(progress.user);
+        };
 
-            this.sendSecretLink = function(email, title, sendMail, returnLink) {
-                return sendSecretLinkCommand.execute(email, title, sendMail, returnLink);
-            };
+        this.sendSecretLink = function(email, title, sendMail, returnLink) {
+            return sendSecretLinkCommand.execute(email, title, sendMail, returnLink);
+        };
 
-            this.register = function(email, username, courseTitle, shortTermAccess) {
-                return authProvider.register(email, username, courseTitle, shortTermAccess);
-            };
+        this.register = function(email, username, courseTitle, shortTermAccess) {
+            return authProvider.register(email, username, courseTitle, shortTermAccess);
+        };
 
-            this.login = function(email, password, shortTermAccess) {
-                return authProvider.login(email, password, shortTermAccess);
-            };
+        this.login = function(email, password, shortTermAccess) {
+            return authProvider.login(email, password, shortTermAccess);
+        };
 
-            this.logOut = function() {
-                if(_private.localStorageProvider){
-                    _private.localStorageProvider.removeProgress();
-                }
-                authProvider.logOut();
-            };
+        this.logOut = function() {
+            if(_private.localStorageProvider){
+                _private.localStorageProvider.removeProgress();
+            }
+            authProvider.logOut();
+        };
 
-            this.progressStorageUrl = urlProvider.progressStorageUrl;
-            this.authLink = function() {
-                return authProvider.authLink()
-            };
-        }
+        this.progressStorageUrl = urlProvider.progressStorageUrl;
+        this.authLink = function() {
+            return authProvider.authLink()
+        };
+    }
 
-        return new ProgressContext();
-    });
+    return new ProgressContext();
+
+    function executeFuncInProviders(name) {
+        var args = Array.prototype.slice.call(arguments, 1),
+            promises = [];
+        _.each(_private.progressProviders, function(provider) {
+            !_.isNull(provider) && _.isFunction(provider[name]) && promises.push(provider[name].apply(provider, args));
+        });
+        return Q.all(promises);
+    }
+
+    function getProgress() {
+        return _private.progressProviders.localStorage.getProgress();
+    }
+
+    function saveProgress(progress) {
+        return _private.executeFuncInProviders('saveProgress', progress, _private.userEmail)
+    }
+
+    function saveResults() {
+        return _private.executeFuncInProviders('saveResults', context.course.score, context.course.getStatus, translation.getTextByKey('[not enough memory to save progress]'));
+    }
+
+    function removeProgress() {
+        return _private.executeFuncInProviders('removeProgress', _private.userEmail);
+    }
+});

@@ -61,6 +61,10 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/rout
                             if (isXapiDisabled()) {
                                 templateSettings.xApi.enabled = false;
                             }
+                            if (isCrossDeviceDisabled()) {
+                                templateSettings.allowCrossDeviceSaving = false;
+                            }
+
                             modules['xApi/xApiInitializer'] = templateSettings.xApi;
 
                             return templateSettings;
@@ -72,6 +76,11 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/rout
             function isXapiDisabled() {
                 var xapi = router.getQueryStringValue('xapi');
                 return !templateSettings.xApi.required && !_.isNullOrUndefined(xapi) && xapi.toLowerCase() === 'false';
+            }
+
+            function isCrossDeviceDisabled() {
+                var crossDevice = router.getQueryStringValue('cross-device');
+                return !_.isNullOrUndefined(crossDevice) && crossDevice.toLowerCase() === 'false';
             }
 
             function loadExternalResources(templateSettings) {

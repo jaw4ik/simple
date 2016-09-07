@@ -120,5 +120,7 @@
     "[expand]": "Agrandir",
     "[collapse]": "Réduire",
     "[keep me logged-in for the next courses]": "Veuillez conserver ma connexion pour les cours suivants",
-    "[please close the browser tab now]": "Veuillez maintenant fermer l'onglet du navigateur"
+    "[please close the browser tab now]": "Veuillez maintenant fermer l'onglet du navigateur",
+    "[finish course when tracking disabled]": "Terminer le cours",
+    "[ok finish course]": "Ok, terminer le cours"
 }

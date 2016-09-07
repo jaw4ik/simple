@@ -13,7 +13,8 @@
         pdfExport: null,
         showConfirmationPopup: ko.observable(true),
         allowContentPagesScoring: ko.observable(false),
-        allowSocialLogin: ko.observable(true),
+        allowCrossDeviceSaving: ko.observable(true),
+        allowSocialLogin: ko.observable(true)
     };
 
     viewModel.getCurrentSettingsData = function (settings) {
@@ -24,6 +25,7 @@
             languages: viewModel.languages.getData(),
             showConfirmationPopup: viewModel.showConfirmationPopup(),
             allowContentPagesScoring: viewModel.allowContentPagesScoring(),
+            allowCrossDeviceSaving: viewModel.allowCrossDeviceSaving(),
             allowLoginViaSocialMedia: viewModel.allowSocialLogin()
         });
     };
@@ -59,12 +61,17 @@
             viewModel.trackingData = new app.TrackingDataModel(settings.xApi);
             viewModel.masteryScore = new app.MasteryScore(settings.masteryScore);
             viewModel.languages = new app.LanguagesModel(manifest.languages, settings.languages);
+            
             if (settings.hasOwnProperty('showConfirmationPopup')) {            
                 viewModel.showConfirmationPopup(settings.showConfirmationPopup);
             }
 
             if (settings.hasOwnProperty('allowContentPagesScoring')) {
                 viewModel.allowContentPagesScoring(settings.allowContentPagesScoring);
+            }
+
+            if (settings.hasOwnProperty('allowCrossDeviceSaving')){
+                viewModel.allowCrossDeviceSaving(settings.allowCrossDeviceSaving);
             }
             
             if (settings.hasOwnProperty('allowLoginViaSocialMedia')) {

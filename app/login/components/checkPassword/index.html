@@ -1,0 +1,49 @@
+<section class="content login password">
+    <div class="icon-container">
+        <span class="icon-user"></span>
+    </div>
+    <h3 data-translate-text="[enter your password to login as]"></h3>
+    <h4>
+        <!-- ko text: username --><!-- /ko -->&nbsp;(<!-- ko text: usermail --><!-- /ko -->)
+    </h4>
+    <form class="mb7 visible">
+        <div class="form-row mh75" data-bind="css: { error: !password.isValid() && password.isModified() }">
+            <input type="text" ondrop="return false;" data-bind="value: password, valueUpdate: 'afterkeydown',css:{empty:!password().length}, attr: { type: passwordHidden() ? 'password' : 'text' }, event: { blur: password.trim }">
+            <label>
+                <span data-translate-text="[password]"></span>
+                <span class="helper-tooltip-container">
+                    <span class="material-icons helper-tooltip">help_outline</span>
+                    <span class="helper-tooltip-text-container">
+                        <span class="helper-tooltip-text">
+                            This password was sent to your email(<span data-bind="text: usermail"></span>) previously
+                        </span>
+                        <span class="helper-tooltip-triangle"></span>
+                    </span>
+                </span>
+            </label>
+            <div class='error-message' data-bind="visible: !password.isValid() && password.isModified()" data-translate-text="[login pasword is not valid]"></div>
+            <div class="error-message" data-bind="visible: passwordIsNotCorrect" data-translate-text="[login email / password combination is not valid]"></div>
+            <div tabindex="0" class="checkbox-container" data-bind="click: toglePasswordVisibility, submitOnEnter, css: { active: !passwordHidden() }">
+                <span class="checkbox-box"></span>
+                <span class="checkbox-text" data-translate-text="[show]"></span>
+            </div>
+        </div>
+    </form>
+    <form class="visible">
+        <div class="form-row mh75 mt15 center">
+            <button class="button primary small w260 pulsar-container" data-bind="click: login">
+                <!-- ko if: requestProcessing -->
+                <div class="pulsar-loader align-center">
+                    <div class="pulsar-loader-item"></div>
+                    <div class="pulsar-loader-item"></div>
+                    <div class="pulsar-loader-item"></div>
+                </div>
+                <!-- /ko -->
+                <!-- ko ifnot: requestProcessing -->
+                <span data-translate-text="[continue with the password]" data-translate-title="[continue with the password]"></span>
+                <!-- /ko -->
+            </button>
+            <!-- ko compose: { model: secretLinkViewModel, activationData: usermail } --><!-- /ko -->
+        </div>
+    </form>
+</section>

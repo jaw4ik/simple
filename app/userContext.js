@@ -12,6 +12,7 @@
         this.username = null;
         this.password = null;
         this.keepMeLoggedIn = false;
+        this.showProgressStorageInfo = true;
     }
 
     function getCurrentUser() {
@@ -21,12 +22,15 @@
     function initialize() {
         return Q.fcall(function() {
             var username = router.getQueryStringValue('name'),
-                email = router.getQueryStringValue('email');
+                email = router.getQueryStringValue('email'),
+                hideContinueCourseOptions = router.getQueryStringValue('hideContinueCourseOptions');
 
             if (username || email) {
                 context.user.email = email ? email : '';
                 context.user.username = username ? username : '';
             }
+
+            context.user.showProgressStorageInfo = hideContinueCourseOptions == null;
         });
     }
 });

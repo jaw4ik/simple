@@ -120,5 +120,7 @@
     "[expand]": "展开",
     "[collapse]": "折叠",
     "[keep me logged-in for the next courses]": "后续课程均保持登录状态",
-    "[please close the browser tab now]": "现在请关闭浏览器选项卡"
+    "[please close the browser tab now]": "现在请关闭浏览器选项卡",
+    "[finish course when tracking disabled]": "完成课程",
+    "[ok finish course]": "好的，完成课程"
 }

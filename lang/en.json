@@ -120,5 +120,7 @@
     "[expand]": "Expand",
     "[collapse]": "Collapse",
     "[keep me logged-in for the next courses]": "Keep me logged-in for the next courses",
-    "[please close the browser tab now]": "Please close the browser tab now"
+    "[please close the browser tab now]": "Please close the browser tab now",
+    "[finish course when tracking disabled]": "Finish course",
+    "[ok finish course]": "OK, finish course"
 }

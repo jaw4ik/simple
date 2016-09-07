@@ -114,5 +114,7 @@
     "[copy]": "Скопіювати",
     "[copied]": "Скопійовано",
     "[keep me logged-in for the next courses]": "Залишитись аторизованим в наступних курсах",
-    "[please close the browser tab now]": "Будь ласка закрийте вікно браузера"
+    "[please close the browser tab now]": "Будь ласка закрийте вікно браузера",
+    "[finish course when tracking disabled]": "Закінчити курс",
+    "[ok finish course]": "Добре, закінчити курс"
 }

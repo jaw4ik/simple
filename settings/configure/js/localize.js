@@ -49,6 +49,7 @@
         'expirenced': 'Expirenced',
         'failed': 'Failed',
         'progressed': 'Progressed',
+        'save progress cross device': 'Save progress cross device (requires login and password):',
         'allow social media': 'Allow login via social media',
 
         //mastery score

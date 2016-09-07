@@ -28,10 +28,66 @@
         <!-- ko ifnot: isError -->
         <div class="settings-tabs-container" data-bind="tabs: {}">
             <ul class="settings-tabs-wrapper unstyled">
+                <li class="settings-tabs-item general" data-tab-link="general" data-bind="localize: 'general settings'"></li>
                 <li class="settings-tabs-item track-and-trace" data-tab-link="track-and-trace" data-bind="localize: 'results tracking'"></li>
                 <li class="settings-tabs-item languages" data-tab-link="languages" data-bind="localize: 'template language'"></li>
-                <li class="settings-tabs-item general" data-tab-link="general" data-bind="localize: 'general settings'"></li>
             </ul>
+            <div class="settings-tab-container general" data-tab="general">
+                <div class="settings-section">
+                    <h1 class="section-header" data-bind="localize: 'general settings'"></h1>
+                    <div class="section-content">
+                        <div class="settings-row">
+                            <div class="settings-caption">
+                                <div data-bind="localize: 'save progress cross device'"></div>
+                            </div>
+                            <div class="settings-column">
+                                <div class="switcher">
+                                    <div class="switcher-text" data-bind="css: { disabled: allowCrossDeviceSaving() }, localize: 'forbid'"></div>
+                                    <div class="switch-toggle-slider" data-bind="switchToggle: { value: allowCrossDeviceSaving }">
+                                        <div class="switch-toggle-wrapper">
+                                            <div class="switch-toggle-on"></div>
+                                            <div class="switch-toogle-blob"></div>
+                                            <div class="switch-toggle-off"></div>
+                                        </div>
+                                    </div>
+                                    <div class="switcher-text" data-bind="css: { disabled: !allowCrossDeviceSaving() }, localize: 'allow'"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-caption">
+                                <div data-bind="localize: 'allow social media'"></div>
+                            </div>
+                            <div class="settings-column">
+                                <div class="switcher">
+                                    <div class="switcher-text" data-bind="css: { disabled: allowSocialLogin() }, localize: 'forbid'"></div>
+                                    <div class="switch-toggle-slider" data-bind="switchToggle: { value: allowSocialLogin }">
+                                        <div class="switch-toggle-wrapper">
+                                            <div class="switch-toggle-on"></div>
+                                            <div class="switch-toogle-blob"></div>
+                                            <div class="switch-toggle-off"></div>
+                                        </div>
+                                    </div>
+                                    <div class="switcher-text" data-bind="css: { disabled: !allowSocialLogin() }, localize: 'allow'"></div>
+                                </div>
+                            </div>
+                            <div class="preview-disabled" data-bind="visible: !allowCrossDeviceSaving()"></div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-caption" data-bind="localize: 'pdf export'"></div>
+                            <div class="settings-content">
+                                <label class="checkbox checked" data-bind="css: {checked: pdfExport.enabled}">
+                                    <span class="checkbox-control">
+                                        <input class="checkbox-control-input" type="checkbox" data-bind="checked: pdfExport.enabled">
+                                        <span class="checkbox-control-input-checked"></span>
+                                    </span>
+                                    <span class="checkbox-label" data-bind="localize: 'show download as pdf button'"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="settings-tab-container track-and-trace" data-tab="track-and-trace">
                 <div class="settings-section" data-bind="with: trackingData">
                     <h1 class="section-header" data-bind="localize: 'track and trace settings'"></h1>
@@ -68,25 +124,6 @@
                                         </div>
                                     </div>
                                     <div class="switcher-text" data-bind="css: { disabled: !allowToSkipTracking() }, localize: 'allow'"></div>
-                                </div>
-                            </div>
-                            <div class="preview-disabled" data-bind="visible: !enableXAPI()"></div>
-                        </div>
-                        <div class="settings-row">
-                            <div class="settings-caption">
-                                <div data-bind="localize: 'allow social media'"></div>
-                            </div>
-                            <div class="settings-column">
-                                <div class="switcher">
-                                    <div class="switcher-text" data-bind="css: { disabled: $parent.allowSocialLogin() }, localize: 'forbid'"></div>
-                                    <div class="switch-toggle-slider" data-bind="switchToggle: { value: $parent.allowSocialLogin }">
-                                        <div class="switch-toggle-wrapper">
-                                            <div class="switch-toggle-on"></div>
-                                            <div class="switch-toogle-blob"></div>
-                                            <div class="switch-toggle-off"></div>
-                                        </div>
-                                    </div>
-                                    <div class="switcher-text" data-bind="css: { disabled: !$parent.allowSocialLogin() }, localize: 'allow'"></div>
                                 </div>
                             </div>
                             <div class="preview-disabled" data-bind="visible: !enableXAPI()"></div>
@@ -332,25 +369,6 @@
                                 <!-- /ko -->
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-            <div class="settings-tab-container general" data-tab="general">
-                <div class="settings-section">
-                    <h1 class="section-header" data-bind="localize: 'general settings'"></h1>
-                    <div class="section-content">
-                        <div class="settings-row">
-                            <div class="settings-caption" data-bind="localize: 'pdf export'"></div>
-                            <div class="settings-content">
-                                <label class="checkbox checked" data-bind="css: {checked: pdfExport.enabled}">
-                                    <span class="checkbox-control">
-                                        <input class="checkbox-control-input" type="checkbox" data-bind="checked: pdfExport.enabled">
-                                        <span class="checkbox-control-input-checked"></span>
-                                    </span>
-                                    <span class="checkbox-label" data-bind="localize: 'show download as pdf button'"></span>
-                                </label>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

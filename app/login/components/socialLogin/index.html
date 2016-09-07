@@ -1,0 +1,22 @@
+<section>
+    <form>
+        <div class="form-row center">
+            <h4 data-translate-text="[authorize with]"></h4>
+            <a href="#" class="social-networks-btn"
+                        data-bind="attr: { href: progressStorageUrl + 'auth/facebook?courseLink=' + encodeURIComponent(window.location.href) + '&courseTitle=' + encodeURIComponent(courseTitle) }">
+                <span class="icon-facebook"></span>
+            </a>
+            <a href="#" class="social-networks-btn"
+                        data-bind="attr: { href: progressStorageUrl + 'auth/linkedin?courseLink=' + encodeURIComponent(window.location.href) + '&courseTitle=' + encodeURIComponent(courseTitle) }">
+                <span class="icon-linkedin"></span>
+            </a>
+            <a href="#" class="social-networks-btn" 
+                        data-bind="attr: { href: progressStorageUrl + 'auth/google?courseLink=' + encodeURIComponent(window.location.href) + '&courseTitle=' + encodeURIComponent(courseTitle) }">
+                <span class="icon-google"></span>
+            </a>
+        </div>
+    </form>
+    <div class="or-separator">
+        <span class="or-separator-text" data-translate-text="[or]"></span>
+    </div>
+</section>

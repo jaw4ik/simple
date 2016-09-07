@@ -1,28 +1,38 @@
-﻿define(['modules/progress/index', 'userContext'], function (progressProvider, userContext) {
+﻿define([
+    'knockout', 'modules/progress/index', 'userContext', 'xApi/xApiInitializer', 'modulesInitializer'
+], function(ko, progressProvider, userContext, xApiInitializer, modulesInitializer) {
 
-    var viewModel = {
+    var viewmodel = {
+        //properties
+        crossDeviceEnabled: false,
+        xAPIEnabled: false,
+        scormEnabled: false,
+        stayLoggedIn: ko.observable(false),
+
+        //methods
         activate: activate,
-        stayLoggedIn: ko.observable(userContext.keepMeLoggedIn),
         toggleStayLoggedIn: toggleStayLoggedIn
     };
 
-    return viewModel;
-    
-    function toggleStayLoggedIn(){
-        viewModel.stayLoggedIn(!viewModel.stayLoggedIn());
-        userContext.keepMeLoggedIn = viewModel.stayLoggedIn();
-    }
+    return viewmodel;
 
     function activate(data) {
+        viewmodel.crossDeviceEnabled = progressProvider.crossDeviceEnabled;
+        viewmodel.xAPIEnabled = xApiInitializer.isActivated();
+        viewmodel.scormEnabled = modulesInitializer.hasModule('../includedModules/lms');
         if (data) {
-            viewModel.close = data.close;
-            viewModel.finish = function (){
-                if (!viewModel.stayLoggedIn()) {
+            viewmodel.close = data.close;
+            viewmodel.finish = function() {
+                if (!viewmodel.stayLoggedIn()) {
                     data.finish(progressProvider.logOut);
                 }
                 data.finish();
             };
-            viewModel.stayLoggedIn(userContext.keepMeLoggedIn);
+            viewmodel.stayLoggedIn(userContext.keepMeLoggedIn);
         }
+    }
+
+    function toggleStayLoggedIn() {
+        viewmodel.stayLoggedIn(userContext.keepMeLoggedIn = !viewmodel.stayLoggedIn());
     }
 });

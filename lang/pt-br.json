@@ -120,5 +120,7 @@
     "[expand]": "Expandir",
     "[collapse]": "Minimizar",
     "[keep me logged-in for the next courses]": "Mantenha-me conectado nos próximos cursos",
-    "[please close the browser tab now]": "Por vavor, feche a aba do navegador agora"
+    "[please close the browser tab now]": "Por vavor, feche a aba do navegador agora",
+    "[finish course when tracking disabled]": "Finalizar o curso",
+    "[ok finish course]": "OK, finalizar o curso"
 }

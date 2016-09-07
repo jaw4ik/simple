@@ -40,11 +40,12 @@ define(['modules/progress/index', 'userContext', 'browserSupport'], function (pr
             viewModel.secretLinkCopied(false),
             viewModel.credentialsCopied(false),
             viewModel.stayLoggedIn(userContext.keepMeLoggedIn);
-            viewModel.progressStorageActivated = progressProvider.isInitialized;
+            viewModel.progressStorageActivated = progressProvider.crossDeviceEnabled;
             viewModel.isOnline = progressProvider.isOnline;
             viewModel.authLink = progressProvider.authLink();
             viewModel.email = userContext.user.email;
             viewModel.password = userContext.user.password;
+            viewModel.showProgressStorageInfo = userContext.user.showProgressStorageInfo;
         }
     }
 });

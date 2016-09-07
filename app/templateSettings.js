@@ -167,6 +167,7 @@ define([], function () {
         },
         "showConfirmationPopup": true,
         "allowContentPagesScoring": false,
+        "allowCrossDeviceSaving": true,
         "allowLoginViaSocialMedia": true
     };
 
@@ -230,6 +231,7 @@ define([], function () {
             that.pdfExport = fullSettings.pdfExport;
             that.showConfirmationPopup = fullSettings.showConfirmationPopup;
             that.allowContentPagesScoring = fullSettings.allowContentPagesScoring;
+            that.allowCrossDeviceSaving = fullSettings.allowCrossDeviceSaving;
             that.allowLoginViaSocialMedia = fullSettings.allowLoginViaSocialMedia;
 
             that.languages.selected = fullSettings.languages.selected;

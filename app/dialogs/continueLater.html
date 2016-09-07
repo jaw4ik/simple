@@ -1,7 +1,7 @@
 <section class="popup-layout" data-bind="scrollbar: { checkDOMChanges: true }, keyDown: { handlers: { 27: close } }">
     <div class="popup">
         <span class="close-btn" data-bind="click: close"></span>
-        <!-- ko ifnot: progressStorageActivated -->
+        <!-- ko ifnot: progressStorageActivated && showProgressStorageInfo -->
         <div class="popup-wrapper">
             <article>
                 <header>
@@ -13,7 +13,9 @@
                     <ul>
                         <!-- ko if: exit -->
                         <li data-translate-text="[finish course take brake first remark]"></li>
+                        <!-- ko ifnot: progressStorageActivated -->
                         <li data-translate-text="[finish course take brake second remark]"></li>
+                        <!-- /ko -->
                         <!-- /ko -->
                     </ul>
                 </section>
@@ -30,7 +32,7 @@
             </article>
         </div>
         <!-- /ko -->
-        <!-- ko if: progressStorageActivated -->
+        <!-- ko if: progressStorageActivated && showProgressStorageInfo -->
         <!-- ko if: isOnline -->
         <div class="popup-wrapper">
             <article class="without-note">

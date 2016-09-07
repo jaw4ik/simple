@@ -20,8 +20,12 @@
             </div>
             <div class="exit-course-wrapper">
                 <div class="exit-course-container">
-                    <button class="button small primary exit-course-button" data-translate-text="[finish course]" data-bind="click: finishAction, css: { disabled: isNavigationLocked }">
-                    </button>
+                    <!-- ko if: !xAPIEnabled && !scormEnabled -->
+                    <button class="button small primary exit-course-button" data-translate-text="[finish course when tracking disabled]" data-bind="click: finishAction, css: { disabled: isNavigationLocked }"></button>
+                    <!-- /ko -->
+                    <!-- ko if: xAPIEnabled || scormEnabled -->
+                    <button class="button small primary exit-course-button" data-translate-text="[finish course]" data-bind="click: finishAction, css: { disabled: isNavigationLocked }"></button>
+                    <!-- /ko -->
                     <div class="or-separator">
                         <span class="or-separator-text" data-translate-text="[or]"></span>
                     </div>

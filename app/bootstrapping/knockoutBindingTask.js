@@ -1,6 +1,7 @@
 define([
     'bootstrapping/knockoutBindings/areaBinding',
     'bootstrapping/knockoutBindings/autofocusBinding',
+    'bootstrapping/knockoutBindings/autosizeBinding',
     'bootstrapping/knockoutBindings/backgroundBinding',
     'bootstrapping/knockoutBindings/circleProgressBinding',
     'bootstrapping/knockoutBindings/contextBinding',

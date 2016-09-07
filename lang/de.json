@@ -120,5 +120,7 @@
     "[expand]": "Erweitern",
     "[collapse]": "Einklappen",
     "[keep me logged-in for the next courses]": "Für die nächsten Kurse angemeldet bleiben",
-    "[please close the browser tab now]": "Bitte schließen Sie jetzt die Browser-Registerkarte"
+    "[please close the browser tab now]": "Bitte schließen Sie jetzt die Browser-Registerkarte",
+    "[finish course when tracking disabled]": "Kurs beenden",
+    "[ok finish course]": "OK, Kurs beenden"
 }

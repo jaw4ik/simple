@@ -5,7 +5,7 @@
                 <div tabindex="0" class="navigation-home-link material-icons" data-bind="submitOnEnter: backToSections, css: { disabled: isNavigationLocked }">home</div>
             </div>
             <div class="section-progress-wrapper">
-                <div class="section-image-wrapper" data-bind="style: { 'background-image': 'url(' + section.imageUrl + ')' }">
+                <div class="section-image-wrapper" data-bind="style: { 'background-image': 'url(' + section.imageUrl + ')' }, css: { 'affect-progress': section.affectProgress }">
                     <!-- ko if: section.affectProgress -->
                     <div class="sections-canvas-wrapper">
                         <canvas tabindex="0" class="canvas-styles" width="92" height="92" data-bind="circleProgress: { progress: section.score(), masteryScore:masteryScore,lineWidth:2 },toolTip:{progress: section.score(), masteryScore:masteryScore}"></canvas>

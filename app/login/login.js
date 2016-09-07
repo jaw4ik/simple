@@ -1,158 +1,76 @@
 define(['knockout','underscore', 'plugins/router', 'eventManager', 'xApi/constants', 'xApi/xApiInitializer',
         'context', 'xApi/configuration/xApiSettings', 'userContext', 'modules/progress/index',
-        'routing/guardLogin', 'progressContext', 'templateSettings'
+        'routing/guardLogin', 'templateSettings', './components/socialLogin/index', './components/checkPassword/index', 
+        './helpers/validatedValue'
     ],
-    function(ko, _, router, eventManager, constants, xApiInitializer, context, xApiSettings, userContext, progressProvider, guardLogin, progressContext, templateSettings) {
+    function(ko, _, router, eventManager, constants, xApiInitializer, context, xApiSettings,
+            userContext, progressProvider, guardLogin, templateSettings, SocialLoginViewModel, CheckPasswordViewModel,
+            validatedValue) {
 
         "use strict";
 
-        var viewModel = {
-            activate: activate,
-            courseTitle: context.course.title,
-            socialLoginAllowed: false,
-            progressStorageActivated: false,
-            progressStorageUrl: progressProvider.progressStorageUrl,
-            isSecretLinkSent: ko.observable(false),
-            sendSecretLink: sendSecretLink,
-            userExists: ko.observable(false),
+        var viewmodel = {
+            //properties
+            loginEnabled: false,
+            crossDeviceSavingEnabled: false,
+            socialLoginEnabled: false,
+            skipAllowed: false,
+            courseTitle: '',
             useEmail: ko.observable(false),
-            register: register,
-            usermail: validatedValue(function(value){
-                return !!value() && constants.patterns.email.test(value());
-            }),
-            username: validatedValue(function(value){
-                return !!value();
-            }),
-            password: validatedValue(function(value){
-                return !!value();
-            }),
-            passwordIsNotCorrect: ko.observable(false),
-            passwordHidden: ko.observable(true),
-            toglePasswordVisibility: toglePasswordVisibility,
-            toggleStayLoggedIn: toggleStayLoggedIn,
-            toggleUseEmail: toggleUseEmail,
-            stayLoggedIn: ko.observable(false),
-
-            allowToSkip: ko.observable(false),
-
-            skip: skip,
-            login: login,
+            rememberMe: ko.observable(false),
             requestProcessing: ko.observable(false),
-            loginEnabled: xApiSettings.xApi.enabled
+            userExists: ko.observable(false),
+            username: null,
+            usermail: null,
+
+            //methods
+            activate: activate,
+            skip: skip,
+            toggleRememberMe: toggleRememberMe,
+            toggleUseEmail: toggleUseEmail,
+            register: register,
+
+            //viewmodels
+            socialLoginViewModel: new SocialLoginViewModel(),
+            checkPasswordViewModel: new CheckPasswordViewModel()
         };
 
-        return viewModel;
-        
-        function toggleUseEmail() {
-            viewModel.useEmail(!viewModel.useEmail());
-            if (viewModel.useEmail()) {
-                viewModel.username.hasFocus(true);
-            }
-        }
+        var xApiEnabled = xApiSettings.xApi.enabled,
+            crossDeviceSavingEnabled = templateSettings.allowCrossDeviceSaving;
+            
+        viewmodel.loginEnabled = xApiEnabled || crossDeviceSavingEnabled;
+        viewmodel.courseTitle =  context.course.title;
+        viewmodel.crossDeviceSavingEnabled = crossDeviceSavingEnabled && progressProvider.isInitialized;
+        viewmodel.socialLoginEnabled = viewmodel.crossDeviceSavingEnabled && templateSettings.allowLoginViaSocialMedia;
+        viewmodel.useEmail(!viewmodel.crossDeviceSavingEnabled || !viewmodel.socialLoginEnabled);
+        viewmodel.skipAllowed = !xApiSettings.xApi.required;
+        viewmodel.username = validatedValue(function(value){
+            return !!value();
+        });
+        viewmodel.usermail = validatedValue(function(value){
+            return !!value() && constants.patterns.email.test(value());
+        });
 
-        function toggleStayLoggedIn(){
-            viewModel.stayLoggedIn(!viewModel.stayLoggedIn());
-            userContext.keepMeLoggedIn = viewModel.stayLoggedIn();
-        }
+        return viewmodel;
 
-        function toglePasswordVisibility() {
-            viewModel.passwordHidden(!viewModel.passwordHidden());
-        }
-
+        //public methods
         function activate() {
-            if (!viewModel.loginEnabled) {
-                viewModel.skip();
-                return;
-            }
-            if (progressProvider.isInitialized) {
-                viewModel.progressStorageActivated = true;
-            } else {
-                viewModel.useEmail(true);
-            }
-
-            if (templateSettings.allowLoginViaSocialMedia) {
-                viewModel.socialLoginAllowed = true;
-            } else {
-                viewModel.useEmail(true);
+            if(!viewmodel.loginEnabled){
+                viewmodel.skip(); return;
             }
 
             var user = userContext.getCurrentUser();
 
-            if (user) {
-                viewModel.username(user.username);
-                viewModel.usermail(user.email);
-
-                viewModel.stayLoggedIn(true);
-                userContext.keepMeLoggedIn = viewModel.stayLoggedIn();
+            if(user){
+                viewmodel.username(user.username);
+                viewmodel.usermail(user.email);
+                viewmodel.rememberMe(userContext.keepMeLoggedIn = true);
                 register();
             }
-
-            viewModel.allowToSkip(!xApiSettings.xApi.required);
-        }
-        
-        function validatedValue(validateCallback){
-            var value = ko.observable('');
-            value.trim = function() {
-                value(ko.utils.unwrapObservable(value).trim());
-            };
-            value.isValid = ko.computed(validateCallback.bind(null, value));
-            value.isModified = ko.observable(false);
-            value.hasFocus = ko.observable(false);
-            value.markAsModified = function() {
-                value.isModified(true);
-                return value;
-            };
-            return value; 
         }
 
-        function sendSecretLink() {
-            viewModel.isSecretLinkSent(true);
-            progressProvider.sendSecretLink(viewModel.usermail(), context.course.title, true);
-        }
-
-        function register() {
-            if (viewModel.usermail.isValid() && viewModel.username.isValid()) {
-                viewModel.requestProcessing(true);
-                if (viewModel.progressStorageActivated) {
-                    if (templateSettings.xApi.enabled) {
-                        xApiInitializer.activate(viewModel.username(), viewModel.usermail()).then(function() {
-                            registerUser();
-                        });
-                    } else {
-                        registerUser();
-                    }
-                } else {
-                    xApiInitializer.activate(viewModel.username(), viewModel.usermail()).then(function() {
-                        viewModel.requestProcessing(false);
-                        startCourse();
-                    });
-                }
-            } else {
-                viewModel.usermail.markAsModified();
-                viewModel.username.markAsModified();
-            }
-
-            function registerUser() {
-                progressProvider.register(viewModel.usermail(), viewModel.username(), context.course.title, viewModel.stayLoggedIn())
-                    .then(function(response) {
-                        if (_.isString(response.password)) {
-                            userContext.user.password = response.password;
-                        }
-                        startCourse();
-                    }).fail(function(reason) {
-                        if (reason.status == 409) {
-                            viewModel.userExists(true);
-                        }
-                    }).always(function() {
-                        userContext.user.email = viewModel.usermail();
-                        userContext.user.username = viewModel.username();
-                        viewModel.requestProcessing(false);
-                    });
-            }
-        }
-
-        function skip() {
-            if (!viewModel.allowToSkip() && viewModel.loginEnabled) {
+        function skip(){
+            if (!viewmodel.skipAllowed && viewmodel.loginEnabled) {
                 return;
             }
             guardLogin.removeGuard();
@@ -161,65 +79,71 @@ define(['knockout','underscore', 'plugins/router', 'eventManager', 'xApi/constan
             startCourse();
         }
 
-        function login() {
-            viewModel.passwordIsNotCorrect(false);
-            if (viewModel.password.isValid()) {
-                viewModel.requestProcessing(true);
-                progressProvider.login(viewModel.usermail(), viewModel.password(), viewModel.stayLoggedIn()).then(function(username) {
-                    if(username){
-                        viewModel.username(username);
-                    }
+        function toggleRememberMe(){
+            viewmodel.rememberMe(userContext.keepMeLoggedIn = !viewmodel.rememberMe());
+        }
 
-                    progressProvider.syncProviders().then(function() {
-                        if (templateSettings.xApi.enabled) {
-                            xApiInitializer.activate(viewModel.username(), viewModel.usermail()).then(function() {
-                                initProgress();
-                                viewModel.requestProcessing(false);
-                            });
-                        } else {
-                            initProgress();
-                            viewModel.requestProcessing(false);
-                        }
-                    });
-                }).fail(function(reason) {
-                    if (reason.status == 403) {
-                        viewModel.passwordIsNotCorrect(true);
-                    }
-                    viewModel.requestProcessing(false);
-                });
-            } else {
-                viewModel.password.markAsModified();
+        function toggleUseEmail(){
+            viewmodel.useEmail(!viewmodel.useEmail());
+            if (viewmodel.useEmail()) {
+                viewmodel.username.hasFocus(true);
             }
         }
 
+        function register() {
+            if(isUserInputDataValid()){
+                viewmodel.requestProcessing(true);
+                if(templateSettings.xApi.enabled){
+                    return initXAPI(function(){
+                        if(viewmodel.crossDeviceSavingEnabled){
+                            return registerUserInProgressStorage();
+                        }
+                        viewmodel.requestProcessing(false);
+                        guardLogin.removeGuard();
+                        startCourse();
+                    });
+                }
+                return registerUserInProgressStorage();
+            }
+        }
+
+        //private methods
         function startCourse() {
             eventManager.courseStarted();
             router.navigate('');
         }
-        
-        function initProgress() {
-            progressContext.use(progressProvider.progressProvider);
 
-            
-            if (progressContext.ready()) {
-                var user = userContext.getCurrentUser(),
-                    progress = progressContext.get();
-                var isCourseStarted = _.isObject(progress) && _.isObject(progress.user) && _.isString(progress.url);
-                if(!isCourseStarted){
-                    eventManager.courseStarted();
-                }
-                if (_.isObject(progress)) {
-                    if (_. isObject(progress.answers)) {
-                        _.each(context.course.sections, function(section) {
-                            _.each(section.questions, function(question) {
-                                if (!_.isNullOrUndefined(progress.answers[question.shortId])) {
-                                    question.progress(progress.answers[question.shortId]);
-                                }
-                            });
-                        });
-                    }
-                    router.navigate(_.isNull(progress.url) ? '' : progress.url.replace('objective', 'section')); //fix for old links
-                }
+        function isUserInputDataValid() {
+            if (viewmodel.usermail.isValid() && viewmodel.username.isValid()) {
+                return true;
             }
+            viewmodel.usermail.markAsModified();
+            viewmodel.username.markAsModified();
+            return false;
+        }
+
+        function registerUserInProgressStorage(){
+            return progressProvider.register(viewmodel.usermail(), viewmodel.username(), context.course.title, viewmodel.rememberMe)
+                .then(function(response){
+                    if (_.isString(response.password)) {
+                        userContext.user.password = response.password;
+                    }
+                    startCourse();
+                })
+                .fail(function(reason){
+                    if (reason.status == 409) {
+                        viewmodel.userExists(true);
+                    }
+                })
+                .done(function(){
+                    userContext.user.email = viewmodel.usermail();
+                    userContext.user.username = viewmodel.username();
+                    viewmodel.requestProcessing(false);
+                });
+        }
+
+        function initXAPI(callback){
+            !_.isFunction(callback) && function(){};
+            return xApiInitializer.activate(viewmodel.username(), viewmodel.usermail()).then(callback);
         }
     });
