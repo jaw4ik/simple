@@ -3352,14 +3352,14 @@ form {
     border-top-right-radius: 3px;
 }
 
-    .Tiles .section-image-holder .button {
-        position: absolute;
-        top: 62px;
-        left: 62px;
-        z-index: 11;
-        transititon: opacity .2s;
-        opacity: 0;
-    }
+.Tiles .section-image-holder .button {
+    position: absolute;
+    top: 62px;
+    left: 62px;
+    z-index: 11;
+    transititon: opacity .2s;
+    opacity: 0;
+}
 
 .Tiles.sections-list-item:hover .section-image-holder .button {
     opacity: 1;
@@ -3375,6 +3375,7 @@ form {
 .Tiles.sections-list-item:hover .section-image-holder .section-image {
     transform: scale(1.06, 1.06);
 }
+
 .Tiles.sections-list-item .section-image-holder:after {
     position: absolute;
     content: '';
@@ -4941,7 +4942,6 @@ form {
 }
 /*#endregion*/
 
-
 .helper-tooltip-container{
     position: relative;
     font-size: 12px;
@@ -4973,17 +4973,18 @@ form {
         margin-top: -10px;
         transition: all 0.2s linear;
         
-        .helper-tooltip-text{
+            .helper-tooltip-text{
 
-        .helper-tooltip-triangle {
-            position: absolute;
-            top: 100%;
-            left: 24px;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 3px 4px 0 4px;
-            border-color: rgba(84,102,119,.9) transparent transparent transparent;
+            .helper-tooltip-triangle {
+                position: absolute;
+                top: 100%;
+                left: 24px;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 3px 4px 0 4px;
+                border-color: rgba(84,102,119,.9) transparent transparent transparent;
+            }
         }
     }
 }
