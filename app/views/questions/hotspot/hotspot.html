@@ -4,6 +4,7 @@
         <div class="question-content styled-content" data-bind="html: content, elementsWrap: {}"></div>
     </div>
     <!-- /ko -->
+    <!-- ko ifnot: isPreview -->
     <div class="hotspot">
         <div class="question-image-wrapper">
             <div class="hotspot-background" data-bind="area: { click: addMark }, background: background">
@@ -17,8 +18,25 @@
                 </ul>
             </div>
         </div>
+        <!-- ko if: isAnswered() -->
+        <div class="question-overlay"></div>
+        <!-- /ko -->
     </div>
-    <!-- ko if: isAnswered -->
-    <div class="question-overlay"></div>
+    <!-- /ko -->
+    <!-- ko if: isPreview -->
+    <div class="hotspot">
+        <div class="question-image-wrapper">
+            <div class="hotspot-background" data-bind="background: background">
+                <ul data-bind="foreach: marks">
+                    <li class="pulsemark" data-bind="style: { left: x + 'px', top: y + 'px' }, css: { 'multiple': $parent.isMultiple }">
+                        <div class="pin"></div>
+                        <div class="mark">
+                            <span class="impulse"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
     <!-- /ko -->
 </section>

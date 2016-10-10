@@ -1,70 +1,74 @@
 ﻿define(function () {
 	"use strict";
 
-	var viewModel = {
-	    question: null,
+	function MultipleSelect() {
+		var self = this;
 
-	    content: null,
-	    isAnswered: ko.observable(false),
-	    answers: null,
+		this.question = null;
 
-	    checkItem: checkItem,
-
-	    submit: submit,
-	    tryAnswerAgain: tryAnswerAgain,
-
-	    initialize: initialize
+	    this.content = null;
+	    this.isAnswered = ko.observable(false);
+	    this.answers = null;
+		this.isSurveyModeEnabled = false;
 	};
 
-	return viewModel;
+	MultipleSelect.prototype.checkItem = function(item) {
+		if (this.isAnswered()) {
+			return;
+		}
 
-	function initialize(question) {
-	    return Q.fcall(function () {
-	        viewModel.question = question;
+		item.isChecked(!item.isChecked());
+	};
 
-	        viewModel.content = question.content;
-	        viewModel.isAnswered(question.isAnswered);
+	MultipleSelect.prototype.initialize = function(question, isPreview) {
+		var self = this;
 
-	        viewModel.answers = _.map(question.answers, function (answer) {
-	            return {
-	                id: answer.id,
-	                text: answer.text,
-	                isChecked: ko.observable(answer.isChecked)
-	            };
-	        });
-	    });
-	}
+		return Q.fcall(function () {
+			self.question = question;
 
-	function checkItem(item) {
-	    if (viewModel.isAnswered()) {
-	        return;
-	    }
+			self.isSurveyModeEnabled = !!question.isSurvey;
+			self.content = question.content;
+			self.isAnswered(question.isAnswered);
+			self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
 
-	    item.isChecked(!item.isChecked());
-	}
+			self.answers = _.map(question.answers, function (answer) {
+				return {
+					id: answer.id,
+					text: answer.text,
+					isChecked: ko.observable(answer.isChecked)
+				};
+			});
+		});
+	};
+	
+	MultipleSelect.prototype.submit = function() {
+		var self = this;
 
-	function submit() {
-	    return Q.fcall(function () {
-	        viewModel.question.submitAnswer(
-				_.chain(viewModel.answers)
+		return Q.fcall(function () {
+			self.question.submitAnswer(
+				_.chain(self.answers)
 				.filter(function (item) {
-				    return item.isChecked();
+					return item.isChecked();
 				})
 				.map(function (item) {
-				    return item.id;
+					return item.id;
 				}).value());
 
-	        viewModel.isAnswered(true);
-	    });
-	}
+			self.isAnswered(true);
+		});
+	};
 
-	function tryAnswerAgain() {
-	    return Q.fcall(function() {
-	        _.each(viewModel.answers, function (answer) {
-	            answer.isChecked(false);
-	        });
+	MultipleSelect.prototype.tryAnswerAgain = function() {
+		var self = this;
 
-	        viewModel.isAnswered(false);
-	    });
-	}
+		return Q.fcall(function() {
+			_.each(self.answers, function (answer) {
+				answer.isChecked(false);
+			});
+
+			self.isAnswered(false);
+		});
+	};
+
+	return MultipleSelect;
 });

@@ -35,6 +35,10 @@ define(['guard', 'constants', 'models/learningContent', 'models/questions/multip
                 hasIncorrectFeedback: question.hasIncorrectFeedback
             };
 
+            if(question.hasOwnProperty('isSurvey')){
+                questionData.isSurvey = question.isSurvey;
+            }
+
             switch (question.type) {
                 case constants.questionTypes.multipleSelect:
                 case constants.questionTypes.singleSelectText:

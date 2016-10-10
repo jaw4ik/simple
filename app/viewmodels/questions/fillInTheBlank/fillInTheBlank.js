@@ -1,52 +1,56 @@
 ﻿define(['knockout'], function (ko) {
 	"use strict";
 
-	var viewModel = {
-	    question: null,
+	function FillInTheBlank() {
+	    this.question = null;
 
-	    content: null,
-	    isAnswered: ko.observable(false),
-	    inputValues: ko.observableArray([]),
-
-	    submit: submit,
-	    tryAnswerAgain: tryAnswerAgain,
-
-	    initialize: initialize
+	    this.content = null;
+	    this.isAnswered = ko.observable(false);
+	    this.inputValues = ko.observableArray([]);
 	};
 
-	return viewModel;
+	FillInTheBlank.prototype.initialize = function(question, isPreview) {
+		var self = this;
 
-	function initialize(question) {
-	    return Q.fcall(function () {
-	        viewModel.question = question;
+		return Q.fcall(function () {
+			return question.load().then(function(){
+				self.question = question;
 
-	        viewModel.isAnswered(question.isAnswered);
-	        viewModel.inputValues(_.map(question.answerGroups, function (answerGroup) {
-	            return {
-	                id: answerGroup.id,
-	                value: answerGroup.answeredText,
-	                answers: answerGroup.answers
-	            };
-	        }));
+				self.isAnswered(question.isAnswered);
+				self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
+				self.inputValues(_.map(question.answerGroups, function (answerGroup) {
+					return {
+						id: answerGroup.id,
+						value: answerGroup.answeredText,
+						answers: answerGroup.answers
+					};
+				}));
 
-	        viewModel.content = question.content;
-	    });
-	}
+				self.content = question.content;
+			});	        
+		});
+	};
 
-	function submit() {
-	    return Q.fcall(function () {
-	        viewModel.question.submitAnswer(viewModel.inputValues());
-	        
-	        viewModel.isAnswered(true);
-	    });
-	}
+	FillInTheBlank.prototype.submit = function() {
+		var self = this;
 
-	function tryAnswerAgain() {
-	    return Q.fcall(function () {
-	        _.each(viewModel.inputValues(), function (blankValue) {
-	            blankValue.value = '';
-	        });
-	        viewModel.isAnswered(false);
-	    });
-	}
+		return Q.fcall(function () {
+			self.question.submitAnswer(self.inputValues());
+			
+			self.isAnswered(true);
+		});
+	};
+
+	FillInTheBlank.prototype.tryAnswerAgain = function() {
+		var self = this;
+		
+		return Q.fcall(function () {
+			_.each(self.inputValues(), function (blankValue) {
+				blankValue.value = '';
+			});
+			self.isAnswered(false);
+		});
+	};
+
+	return FillInTheBlank;
 });

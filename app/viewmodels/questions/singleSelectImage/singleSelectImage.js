@@ -1,32 +1,37 @@
 ﻿define(['browserSupport'], function (browserSupport) {
     "use strict";
 
-    var viewModel = {
-        canHover: !browserSupport.isMobileDevice,
-        question: null,
+    function SingleSelectImage() {
+        var self = this;
 
-        content: null,
-        isAnswered: ko.observable(false),
-        answers: null,
-        checkedAnswerId: ko.observable(null),
-        checkItem: checkItem,
-        
-        submit: submit,
-        tryAnswerAgain: tryAnswerAgain,
+        this.canHover = !browserSupport.isMobileDevice;
+        this.question = null;
 
-        initialize: initialize
+        this.content = null;
+        this.isAnswered = ko.observable(false);
+        this.answers = null;
+        this.checkedAnswerId = ko.observable(null);
     };
 
-    return viewModel;
+    SingleSelectImage.prototype.checkItem = function(item) {
+            if (this.isAnswered()) {
+                return;
+            }
+            
+            this.checkedAnswerId(item.id);
+        };
 
-    function initialize(question) {
+    SingleSelectImage.prototype.initialize = function(question, isPreview) {
+        var self = this;
+
         return Q.fcall(function () {
-            viewModel.question = question;
-            viewModel.checkedAnswerId(question.checkedAnswerId);
+            self.question = question;
+            self.checkedAnswerId(question.checkedAnswerId);
 
-            viewModel.content = question.content;
-            viewModel.isAnswered(question.isAnswered);
-            viewModel.answers = _.map(question.answers, function (answer) {
+            self.content = question.content;
+            self.isAnswered(question.isAnswered);
+            self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
+            self.answers = _.map(question.answers, function (answer) {
                 return {
                     id: answer.id,
                     image: answer.image,
@@ -34,28 +39,27 @@
                 };
             });
         });
-    }
+    };
 
-    function checkItem() {
-        if (viewModel.isAnswered()) {
-            return;
-        }
-        viewModel.checkedAnswerId(this.id);
-    }
+    SingleSelectImage.prototype.submit = function() {
+        var self = this;
 
-    function submit() {
         return Q.fcall(function () {
-            viewModel.question.submitAnswer(viewModel.checkedAnswerId());
+            self.question.submitAnswer(self.checkedAnswerId());
 
-            viewModel.isAnswered(true);
+            self.isAnswered(true);
         });
-    }
+    };
 
-    function tryAnswerAgain() {
+    SingleSelectImage.prototype.tryAnswerAgain = function() {
+        var self = this;
+        
         return Q.fcall(function () {
-            viewModel.checkedAnswerId(null);
+            self.checkedAnswerId(null);
 
-            viewModel.isAnswered(false);
+            self.isAnswered(false);
         });
-    }
+    };
+
+    return SingleSelectImage;
 });

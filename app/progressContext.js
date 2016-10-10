@@ -129,7 +129,7 @@
             var progress = self.storage.getProgress();
             if (!_.isEmpty(progress) &&
                 _.isString(progress.attemptId) &&
-                ((!user) || (user.username == progress.user.username && user.email == progress.user.email))) {
+                ((!user) || (!progress.user) || (user.username == progress.user.username && user.email == progress.user.email))) {
                 self.progress = progress;
             }
         }

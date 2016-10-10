@@ -178,11 +178,15 @@ define(['./models/actor', './models/statement', './models/activity', './models/a
 
                 var parentUrl = activityProvider.rootCourseUrl + '#sections?section_id=' + section.id;
 
-                var context = createContextModel({
-                    contextActivities: new contextActivitiesModel({
-                        parent: [createActivity(parentUrl, section.title)]
-                    })
+                var contextObj = {};
+                contextObj.contextActivities = new contextActivitiesModel({
+                    parent: [createActivity(parentUrl, section.title)]
                 });
+                contextObj.extensions = {};
+                contextObj.extensions[constants.extenstionKeys.surveyMode] = question.hasOwnProperty('isSurvey') && question.isSurvey;
+                contextObj.extensions[constants.extenstionKeys.questionType] = question.type;
+
+                var context = createContextModel(contextObj);
 
                 if (parts) {
                     var verb = question.type === globalConstants.questionTypes.informationContent ?
@@ -216,7 +220,7 @@ define(['./models/actor', './models/statement', './models/activity', './models/a
                     definition: new interactionDefinitionModel({
                         name: new languageMapModel(question.title),
                         interactionType: constants.interactionTypes.choice,
-                        correctResponsesPattern: [
+                        correctResponsesPattern: !!question.isSurvey ? [] : [
                             getItemsIds(question.answers, function (item) {
                                 return item.isCorrect;
                             }).join("[,]")
@@ -247,7 +251,7 @@ define(['./models/actor', './models/statement', './models/activity', './models/a
                     definition: new interactionDefinitionModel({
                         name: new languageMapModel(question.title),
                         interactionType: constants.interactionTypes.choice,
-                        correctResponsesPattern: [
+                        correctResponsesPattern: !!question.isSurvey ? [] : [
                             _.map(question.statements, function (item) {
                                 return item.id + '[.]' + item.isCorrect;
                             }).join("[,]")
@@ -497,13 +501,14 @@ define(['./models/actor', './models/statement', './models/activity', './models/a
             return createStatement(constants.verbs.experienced, result, object, context);
         }
 
-        function createActor(name, email) {
+        function createActor(name, email, account) {
             var actor = {};
 
             try {
                 actor = actorModel({
                     name: name,
-                    mbox: 'mailto:' + email
+                    mbox: 'mailto:' + email,
+                    account: account
                 });
             } catch (e) {
                 errorsHandler.handleError(errorsHandler.errors.actorDataIsIncorrect);

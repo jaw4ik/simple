@@ -1,40 +1,44 @@
 ﻿define([], function() {
     "use strict";
 
-    var viewModel = {
-        question: null,
-        content: null,
-        answeredText: ko.observable(''),
-        isAnswered: ko.observable(false),
-
-        initialize: initialize,
-        submit: submit,
-        tryAnswerAgain: tryAnswerAgain,
+    function OpenQuestion(){
+        this.question = null;
+        this.content = null;
+        this.answeredText = ko.observable('');
+        this.isAnswered = ko.observable(false);
         
-        feedbackView: 'questions/openQuestion/feedback.html'        
+        this.feedbackView = 'questions/openQuestion/feedback.html';  
     };
-    return viewModel;
 
-    function initialize(question) {
+    OpenQuestion.prototype.initialize = function(question, isPreview) {
+        var self = this;
+
         return Q.fcall(function() {
-            viewModel.question = question;
-            viewModel.content = question.content;
-            viewModel.answeredText(question.answeredText);
-            viewModel.isAnswered(question.isAnswered);
+            self.question = question;
+            self.content = question.content;
+            self.answeredText(question.answeredText);
+            self.isAnswered(question.isAnswered);
+            self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
         });
-    }
+    };
 
-    function submit() {
-        return Q.fcall(function () {
-            viewModel.question.submitAnswer(viewModel.answeredText().trim());
-            viewModel.isAnswered(true);
-        });
-    }
+    OpenQuestion.prototype.submit = function() {
+        var self = this;
 
-    function tryAnswerAgain() {
         return Q.fcall(function () {
-            viewModel.answeredText('');
-            viewModel.isAnswered(false);
+            self.question.submitAnswer(self.answeredText().trim());
+            self.isAnswered(true);
         });
-    }
+    };
+
+    OpenQuestion.prototype.tryAnswerAgain = function() {
+        var self = this;
+        
+        return Q.fcall(function () {
+            self.answeredText('');
+            self.isAnswered(false);
+        });
+    };
+
+    return OpenQuestion;
 });

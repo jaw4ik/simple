@@ -116,5 +116,13 @@
     "[keep me logged-in for the next courses]": "Залишитись аторизованим в наступних курсах",
     "[please close the browser tab now]": "Будь ласка закрийте вікно браузера",
     "[finish course when tracking disabled]": "Закінчити курс",
-    "[ok finish course]": "Добре, закінчити курс"
+    "[ok finish course]": "Добре, закінчити курс",
+    "[the owner of the course has limited the access]": "Автор обмежив доступ до курсу",
+    "[back to sign in]": "Назад",
+    "[survey mode caption]": "Відповідь на це питання не вплине на ваш прогрес",
+    "[continue course]": "Повернутися до курсу",
+    "[submit results and logout]": "Надіслати прогрес",
+    "[questions correct]": "правильних відповідей",
+    "[contents readed]": "матеріалів переглянуто",
+    "[section]": "Секція"
 }

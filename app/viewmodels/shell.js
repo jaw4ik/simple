@@ -2,9 +2,9 @@ define([
     'knockout', 'underscore', 'durandal/app', 'durandal/composition', 'plugins/router',
     'routing/routes', 'context', 'modulesInitializer', 'templateSettings',
     'background', 'progressContext', 'constants', 'userContext', 'errorsHandler',
-    'lessProcessor', 'modules/progress/index', 'routing/guardLogin', 'xApi/xApiInitializer'
+    'lessProcessor', 'modules/progress/index', 'routing/guardRoute', 'xApi/xApiInitializer'
 ], function(ko, _, app, composition, router, routes, context, modulesInitializer, templateSettings, background,
-    progressContext, constants, userContext, errorsHandler, lessProcessor, progressProvider, guardLogin,
+    progressContext, constants, userContext, errorsHandler, lessProcessor, progressProvider, guardRoute,
     xApiInitializer) {
 
     'use strict';
@@ -65,18 +65,10 @@ define([
         function initializeProgressProvider() {
             if (!modulesInitializer.hasModule('../includedModules/lms') && location.href.indexOf('/preview/') === -1) {
                 return progressProvider.initialize(templateSettings.allowCrossDeviceSaving).then(function(user) {
-                    if (_.isNull(user)) {
-                        guardLogin.createGuard(progressProvider.isUserAuthenticated);
-                    }
                     progressContext.use(progressProvider.progressProvider);
-                }).fail(function() {
-                    guardLogin.createGuard(progressProvider.isUserAuthenticated);
+                }).fail(function () {
                     progressContext.use(progressProvider.progressProvider);
                 });
-            } else {
-                if (templateSettings.xApi.enabled) {
-                    guardLogin.createGuard(xApiInitializer.isActivated);
-                }
             }
         }
 
@@ -92,6 +84,7 @@ define([
         }
 
         function initRouter() {
+            guardRoute.createGuard();
             return router.map(routes).buildNavigationModel().mapUnknownRoutes('viewmodels/404', '404').activate().then(function() {
                 errorsHandler.startHandle();
             });

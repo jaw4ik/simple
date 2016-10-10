@@ -1,4 +1,4 @@
-﻿<section class="summary-wrapper" data-bind="blockBodyScroll: finishCoursePopup.isVisible() || continueLaterPopup.isVisible()">
+﻿<section class="summary-wrapper" data-bind="blockBodyScroll: continueLaterPopup.isVisible()">
     <!-- ko if: type() === 'extended' -->
     <section class="summary-extended-wrapper">
         <div class="summary-extended-background" data-bind="secondaryBackground: {}"></div>
@@ -52,9 +52,6 @@
             <span class="finish-course-layout-loader-text" data-translate-text="[tracking and tracing reporting progress]">reporting progress...</span>
         </div>
     </div>
-    <!-- ko if: finishCoursePopup.isVisible -->
-        <!-- ko compose: { view: 'dialogs/finishCourse', model: 'dialogs/finishCourse', activationData: [ finishCoursePopup.actions, finishCoursePopup.isVisible ] } --><!-- /ko -->
-    <!-- /ko -->
     <!-- ko if: continueLaterPopup.isVisible -->
         <!-- ko compose: { view: 'dialogs/continueLater', model: 'dialogs/continueLater', activationData: [ continueLaterPopup.actions, continueLaterPopup.isVisible ] } --><!-- /ko -->
     <!-- /ko -->

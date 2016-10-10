@@ -7,6 +7,7 @@
             if (currentItemIndex > -1) {
                 return {
                     previousQuestionUrl: _getQuestionUrl(section, section.questions[currentItemIndex - 1]),
+                    currentQuestionUrl: _getQuestionUrl(section, section.questions[currentItemIndex]),
                     nextQuestionUrl: _getQuestionUrl(section, section.questions[currentItemIndex + 1]),
                     questionsCount : section.questions.length,
                     currentQuestionIndex : currentItemIndex + 1

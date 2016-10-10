@@ -1,48 +1,53 @@
 ﻿define(['knockout', 'viewmodels/questions/scenarioQuestion/components/branchtrackProvider'], function (ko, branchtrackProvider) {
     "use strict";
 
-    var viewModel = {
-        question: null,
-        content: null,
-        embedCode: ko.observable(null),
-        isAnswered: ko.observable(false),
-        initialize: initialize,
-        submit: submit,
-        tryAnswerAgain: tryAnswerAgain,
-        deactivate: deactivate,
+    function ScenarioQuestion(){
+        this.question = null;
+        this.content = null;
+        this.embedCode = ko.observable(null);
+        this.isAnswered = ko.observable(false);
+        this.isCorrect = ko.observable(false);
         
-        feedbackView: 'questions/scenarioQuestion/feedback.html',
-        customSubmitViewModel: 'viewmodels/questions/scenarioQuestion/submitQuestion'
+        this.feedbackView = 'questions/scenarioQuestion/feedback.html';
+        this.customSubmitViewModel = 'viewmodels/questions/scenarioQuestion/submitQuestion';
     };
 
-    return viewModel;
+    ScenarioQuestion.prototype.initialize = function(question, isPreview) {
+        var self = this;
 
-    function initialize(question) {
         return Q.fcall(function () {
-            viewModel.question = question;
-            viewModel.content = question.content;
-            viewModel.embedCode(question.embedCode);
-            viewModel.isAnswered(question.isAnswered);
+            self.question = question;
+            self.content = question.content;
+            self.embedCode(question.embedCode);
+            self.isAnswered(question.isAnswered);
+            self.isCorrect(question.isCorrectAnswered);
+            self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
             branchtrackProvider.init(question.projectId, question.masteryScore);
         });
     }
 
-    function submit() {
+    ScenarioQuestion.prototype.submit = function() {
+        var self = this;
+
         return Q.fcall(function () {
-            viewModel.question.submitAnswer(branchtrackProvider.score());
-            viewModel.isAnswered(true);
+            self.question.submitAnswer(branchtrackProvider.score());
+            self.isAnswered(true);
         });
     }
 
-    function tryAnswerAgain() {
+    ScenarioQuestion.prototype.tryAnswerAgain = function() {
+        var self = this;
+        
         return Q.fcall(function () {
-            viewModel.isAnswered(false);
-            viewModel.embedCode.valueHasMutated();
+            self.isAnswered(false);
+            self.embedCode.valueHasMutated();
             branchtrackProvider.reset();
         });
     }
 
-    function deactivate() {
+    ScenarioQuestion.prototype.deactivate = function() {
         branchtrackProvider.destroy();
     }
+
+    return ScenarioQuestion;
 });

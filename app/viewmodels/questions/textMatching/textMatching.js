@@ -1,41 +1,36 @@
 ﻿define(['viewmodels/questions/textMatching/textMatchingSource', 'viewmodels/questions/textMatching/textMatchingTarget'], function (Source, Target) {
 
-    var viewModel = {
-        question: null,
-        content: null,
-        isAnswered: ko.observable(false),
+    function TextMatching() {
+        this.question = null;
+        this.content = null;
+        this.isAnswered = ko.observable(false);
 
-        values: [],
+        this.values = [];
 
-        sources: ko.observableArray([]),
-        targets: ko.observableArray([]),
-
-        submit: submit,
-        tryAnswerAgain: tryAnswerAgain,
-
-        initialize: initialize
+        this.sources = ko.observableArray([]);
+        this.targets = ko.observableArray([]);
     };
 
-    viewModel.acceptValue = function (value) {
-        viewModel.targets.push(value);
+    TextMatching.prototype.acceptValue = function (value) {
+        this.targets.push(value);
     };
 
 
-    viewModel.rejectValue = function (value) {
-        viewModel.targets.remove(value);
+    TextMatching.prototype.rejectValue = function (value) {
+        this.targets.remove(value);
     };
 
-    return viewModel;
-
-    function initialize(question) {
+    TextMatching.prototype.initialize = function(question, isPreview) {
+        var self = this;
 
         return Q.fcall(function () {
-            viewModel.question = question;
+            self.question = question;
 
-            viewModel.content = question.content;
-            viewModel.isAnswered(question.isAnswered);
+            self.content = question.content;
+            self.isAnswered(question.isAnswered);
+            self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
 
-            viewModel.values = _.chain(question.answers)
+            self.values = _.chain(question.answers)
                 .map(function (answer) {
                     return answer.value;
                 })
@@ -44,7 +39,7 @@
 
             var targets = [];
 
-            _.each(viewModel.values, function (value) {
+            _.each(self.values, function (value) {
                 targets.push(new Target(value));
             });
 
@@ -65,31 +60,35 @@
                 sources.push(source);
             });
 
-            viewModel.targets(targets);
-            viewModel.sources(_.shuffle(sources));
+            self.targets(targets);
+            self.sources(_.shuffle(sources));
         });
-    }
+    };
 
-    function submit() {
+    TextMatching.prototype.submit = function() {
+        var self = this;
+
         return Q.fcall(function () {
-            viewModel.question.submitAnswer(_.map(viewModel.sources(), function (source) {
+            self.question.submitAnswer(_.map(self.sources(), function (source) {
                 var value = source.value() ? source.value() : null;
                 return { id: source.id, value: value };
             }));
-            viewModel.isAnswered(true);
+            self.isAnswered(true);
         });
-    }
+    };
 
-    function tryAnswerAgain() {
+    TextMatching.prototype.tryAnswerAgain = function() {
+        var self = this;
+
         return Q.fcall(function () {
-
-            _.each(viewModel.sources(), function (pair, index) {
+            _.each(self.sources(), function (pair, index) {
                 pair.rejectValue();
-                viewModel.targets()[index].acceptValue(viewModel.values[index]);
+                self.targets()[index].acceptValue(self.values[index]);
             });
 
-            viewModel.isAnswered(false);
+            self.isAnswered(false);
         });
-    }
+    };
 
+    return TextMatching;
 });

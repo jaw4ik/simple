@@ -1,10 +1,10 @@
 ﻿<section class="overlay-wrapper">
     <!-- ko if: content -->
     <div class="question-content-wrapper blank-content fill-in-the-blank">
-        <div class="question-content blank-answers styled-content" data-bind="elementsWrap: {}, fillInTheBlankAnswers: { inputValues:inputValues, content:content, isAnswered: isAnswered }"></div>
+        <div class="question-content blank-answers styled-content" data-bind="elementsWrap: {}, fillInTheBlankAnswers: { inputValues:inputValues, content:content, isAnswered: isAnswered() || isPreview() }"></div>
     </div>
     <!-- /ko -->
-    <!-- ko if: isAnswered -->
+    <!-- ko if: isAnswered() && !isPreview() -->
     <div class="question-overlay"></div>
     <!-- /ko -->
 </section>

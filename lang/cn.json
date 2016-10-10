@@ -122,5 +122,13 @@
     "[keep me logged-in for the next courses]": "后续课程均保持登录状态",
     "[please close the browser tab now]": "现在请关闭浏览器选项卡",
     "[finish course when tracking disabled]": "完成课程",
-    "[ok finish course]": "好的，完成课程"
+    "[ok finish course]": "好的，完成课程",
+    "[the owner of the course has limited the access]": "课程拥有人限制了访问",
+    "[back to sign in]": "返回登录",
+    "[survey mode caption]": "答案不会对您的进度有任何影响",
+    "[continue course]": "继续课程",
+    "[submit results and logout]": "提交成绩并登出",
+    "[questions correct]": "问题正确",
+    "[contents readed]": "内容已阅",
+    "[section]": "章节"
 }

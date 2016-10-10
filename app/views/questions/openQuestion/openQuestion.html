@@ -7,7 +7,7 @@
     <div class="edit-field-wrapper">
         <textarea class="open-question-edit-field edit-field selectable" data-bind="textArea: answeredText, attr:{ disabled: isAnswered }" data-translate-placeholder="[type your answer here]"></textarea>
     </div>
-    <!-- ko if: isAnswered -->
+    <!-- ko if: isAnswered() || isPreview() -->
     <div class="question-overlay"></div>
     <!-- /ko -->
 </section>

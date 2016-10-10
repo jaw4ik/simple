@@ -4,15 +4,30 @@
         <div class="question-content styled-content" data-bind="html: content, elementsWrap: {}"></div>
     </div>
     <!-- /ko -->
+    <!-- ko ifnot: isPreview -->
+    <!-- ko if: isSurveyModeEnabled -->
+    <div class="text-matching-caption" data-translate-text="[survey mode caption]"></div>
+    <!-- /ko -->
     <ul class="question-answers-list" data-bind="foreach: answers">
-        <li class="checkbox" data-bind="click: $parent.checkItem, submitOnEnter, css: { checked: isChecked(), enabled: !$parent.isAnswered()}, attr: { tabindex: $parent.isAnswered() ? '-1' : '0' }">
+        <li class="checkbox" data-bind="click: $parent.checkItem.bind($parent), submitOnEnter, css: { checked: isChecked(), enabled: !$parent.isAnswered()}, attr: { tabindex: $parent.isAnswered() ? '-1' : '0' }">
             <span class="checkbox-icon-wrapper">
                 <button tabindex="-1" class="checkbox-icon" data-bind="css: { checked: isChecked() }"></button>
             </span>
             <label class="checkbox-text" data-bind="text: text"></label>
         </li>
     </ul>
-    <!-- ko if: isAnswered -->
+    <!-- /ko -->
+    <!-- ko if: isPreview -->
+    <ul class="question-answers-list" data-bind="foreach: answers">
+        <li class="checkbox" data-bind="css: { checked: isChecked() }">
+            <span class="checkbox-icon-wrapper">
+                <button tabindex="-1" class="checkbox-icon" data-bind="css: { checked: isChecked() }"></button>
+            </span>
+            <label class="checkbox-text" data-bind="text: text"></label>
+        </li>
+    </ul>
+    <!-- /ko -->
+    <!-- ko if: isAnswered() || isPreview() -->
     <div class="question-overlay"></div>
     <!-- /ko -->
 </section>

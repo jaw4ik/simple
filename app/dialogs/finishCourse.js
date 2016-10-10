@@ -17,7 +17,7 @@
     return viewmodel;
 
     function activate(data) {
-        viewmodel.crossDeviceEnabled = progressProvider.crossDeviceEnabled;
+        viewmodel.crossDeviceEnabled = progressProvider.crossDeviceEnabled && progressProvider.isInitialized;
         viewmodel.xAPIEnabled = xApiInitializer.isActivated();
         viewmodel.scormEnabled = modulesInitializer.hasModule('../includedModules/lms');
         if (data) {

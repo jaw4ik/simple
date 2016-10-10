@@ -30,15 +30,6 @@
         activate: activate
     };
 
-    viewModel.finishCoursePopup = new Popup();
-    viewModel.finishCoursePopup.actions = {
-        close: viewModel.finishCoursePopup.hide,
-        finish: function(logOutCallback) {
-            finish(logOutCallback);
-            viewModel.finishCoursePopup.hide();
-        }
-    };
-
     viewModel.continueLaterPopup = new Popup();
 
     viewModel.continueLaterPopup.actions = {
@@ -55,16 +46,10 @@
     });
 
     viewModel.finishAction = function() {
-        if (templateSettings.showConfirmationPopup) {
-            viewModel.continueLaterPopup.hide();
-            viewModel.finishCoursePopup.show();
-        } else {
-            finish();
-        }
+        router.navigate('#finish');
     };
 
     viewModel.takeABreakAction = function() {
-        viewModel.finishCoursePopup.hide();
         viewModel.continueLaterPopup.show();
     }
 
@@ -74,14 +59,6 @@
         viewModel.type(type);
         viewModel.xAPIEnabled = xApiInitializer.isActivated();
         viewModel.scormEnabled = modulesInitializer.hasModule('../includedModules/lms');
-    }
-
-    function onCourseFinishedCallback(logOutCallback) {
-        viewModel.status(statuses.finished);
-
-        progressContext.status(progressStatuses.ignored);
-        logOutCallback();
-        windowOperations.close();
     }
 
     function exit() {
@@ -94,17 +71,6 @@
         }
 
         windowOperations.close();
-    }
-
-    function finish(logOutCallback) {
-        if (viewModel.isNavigationLocked() || viewModel.status() !== statuses.readyToFinish) {
-            return;
-        }
-        viewModel.status(statuses.sendingRequests);
-        var course = courseRepository.get();
-        course.finish(onCourseFinishedCallback.bind(viewModel, logOutCallback || function() {}));
-
-        progressContext.remove();
     }
 
     function Popup() {

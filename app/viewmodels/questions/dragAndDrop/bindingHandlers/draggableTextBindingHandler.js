@@ -6,7 +6,8 @@
             var allBindings = allBindingsAccessor();
             var scope = ko.utils.unwrapObservable(allBindings.scope) || 'question';
             var $element = $(element);
-
+			
+			$element.css('touch-action','none');
             $element.draggable({
                 appendTo: '.application-wrapper',
                 containment: '.application-wrapper',

@@ -4,13 +4,23 @@
         <div class="question-content styled-content" data-bind="html: content, elementsWrap: {}"></div>
     </div>
     <!-- /ko -->
+    <!-- ko ifnot: isPreview -->
     <div data-bind="dragula: { data: rankingItems }" class="gu-unselectable">
         <div class="ranking-item gu-draggable">
             <span class="ranking-item-icon"></span>
             <span class="ranking-item-text" data-bind="text: text"></span>
         </div>
     </div>
-    <!-- ko if: isAnswered -->
+    <!-- /ko -->
+    <!-- ko if: isPreview -->
+    <div data-bind="foreach: { data: rankingItems }" class="gu-unselectable">
+        <div class="ranking-item gu-draggable">
+            <span class="ranking-item-icon"></span>
+            <span class="ranking-item-text" data-bind="text: text"></span>
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: isAnswered() || isPreview() -->
     <div class="question-overlay"></div>
     <!-- /ko -->
 </section>

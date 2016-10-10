@@ -1,0 +1,8 @@
+<div class="question-header" data-bind="css: {'survey': isSurvey, 'correct': isCorrectAnswered() && !isSurvey, 'wrong': !isCorrectAnswered() && !isSurvey}, attr: {'data-count': index}">
+    <div class="question-title">
+        <a class="question-title-link" data-bind="text: title, attr: {href: navigationContext.currentQuestionUrl}"></a>
+    </div>
+</div>
+<div class="question-content">
+    <!-- ko compose: activeQuestionViewModel --><!-- /ko -->
+</div>

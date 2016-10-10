@@ -1,0 +1,17 @@
+﻿<section id="noaccess" class="unselectable">
+    <header class="page-header">
+        <h1 class="course-title" data-bind="css: {small: courseTitle.length>100}">
+            <span class="course-label" data-translate-text="[course]"></span>&nbsp;&#34;<span class="course-caption" data-bind="text: courseTitle, reviewable: {type: 'course', property: 'title'}">"course_name"</span>&#34;
+        </h1>
+    </header>
+    <section class="content noaccess">
+        <div class="noaccess-icon">
+            <span class="icon-attention"></span>
+        </div>
+        <div class="noaccess-notification" data-translate-text="[the owner of the course has limited the access]"></div>
+        <button class="button primary small autofocus back-to-signin" data-bind="click: backToSignin">
+            <span class="icon-home"></span>
+            <span data-translate-text="[back to sign in]" data-translate-title="[back to sign in]"></span>
+        </button>
+    </section>
+</section>

@@ -122,5 +122,13 @@
     "[keep me logged-in for the next courses]": "Mantenha-me conectado nos próximos cursos",
     "[please close the browser tab now]": "Por vavor, feche a aba do navegador agora",
     "[finish course when tracking disabled]": "Finalizar o curso",
-    "[ok finish course]": "OK, finalizar o curso"
+    "[ok finish course]": "OK, finalizar o curso",
+    "[the owner of the course has limited the access]": "O proprietário do curso limitou o acesso",
+    "[back to sign in]": "Voltar para fazer login",
+    "[survey mode caption]": "A resposta não afetará seu progresso",
+    "[continue course]": "Continuar o curso",
+    "[submit results and logout]": "Enviar resultados e fazer logoff",
+    "[questions correct]": "questões corretas",
+    "[contents readed]": "conteúdos foram lidos",
+    "[section]": "Seção"
 }

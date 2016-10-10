@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
     del = require('del'),
     durandal = require('gulp-durandal'),
-    minifyCss = require('gulp-minify-css'),
+    cleanCSS = require('gulp-clean-css'),
     uglify = require('gulp-uglify'),
     eventStream = require('event-stream'),
     useref = require('gulp-useref'),
@@ -101,7 +101,7 @@ gulp.task('build-app', ['pre-build'], function () {
     gulp.src('index.html')
         .pipe(assets)
         .pipe(gulpif('*.js', uglify()))
-        .pipe(gulpif('*.css', minifyCss()))
+        .pipe(gulpif('*.css', cleanCSS()))
         .pipe(assets.restore())
         .pipe(useref())
         .pipe(replace('css/colors.less', 'css/colors.css'))
@@ -162,7 +162,7 @@ gulp.task('build-settings', ['build-design-settings', 'build-configure-settings'
         .pipe(gulp.dest(output + '/settings/css/img'));
 
     gulp.src('settings/css/settings.css')
-        .pipe(minifyCss())
+        .pipe(cleanCSS())
         .pipe(gulp.dest(output + '/settings/css'));
 
     gulp.src('settings/api.js')
@@ -187,7 +187,7 @@ gulp.task('build-design-settings', ['pre-build'], function () {
         .pipe(gulp.dest(output + '/settings/design/css/fonts'));
 
     gulp.src('settings/design/css/design.css')
-        .pipe(minifyCss())
+        .pipe(cleanCSS())
         .pipe(gulp.dest(output + '/settings/design/css'));
 
 });
@@ -213,7 +213,7 @@ gulp.task('build-configure-settings', ['pre-build'], function () {
         .pipe(gulp.dest(output + '/settings/configure/css/fonts'));
 
     gulp.src('settings/configure/css/configure.css')
-        .pipe(minifyCss())
+        .pipe(cleanCSS())
         .pipe(gulp.dest(output + '/settings/configure/css'));
 
 });
@@ -224,7 +224,7 @@ gulp.task('build-pdf-app', ['pre-build'], function () {
     gulp.src('pdf/index.html')
         .pipe(assets)
         .pipe(gulpif('*.js', uglify()))
-        .pipe(gulpif('*.css', minifyCss()))
+        .pipe(gulpif('*.css', cleanCSS()))
         .pipe(assets.restore())
         .pipe(useref())
         .pipe(addBuildVersion())
@@ -237,7 +237,7 @@ gulp.task('build-searchcontent-app', ['pre-build'], function () {
     gulp.src('searchcontent/index.html')
         .pipe(assets)
         .pipe(gulpif('*.js', uglify()))
-        .pipe(gulpif('*.css', minifyCss()))
+        .pipe(gulpif('*.css', cleanCSS()))
         .pipe(assets.restore())
         .pipe(useref())
         .pipe(addBuildVersion())

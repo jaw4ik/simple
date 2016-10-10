@@ -1,11 +1,11 @@
-define(['knockout','underscore', 'plugins/router', 'eventManager', 'xApi/constants', 'xApi/xApiInitializer',
+define(['knockout', 'underscore', 'plugins/router', 'eventManager', 'xApi/constants', 'xApi/xApiInitializer',
         'context', 'xApi/configuration/xApiSettings', 'userContext', 'modules/progress/index',
-        'routing/guardLogin', 'templateSettings', './components/socialLogin/index', './components/checkPassword/index', 
-        './helpers/validatedValue'
-    ],
-    function(ko, _, router, eventManager, constants, xApiInitializer, context, xApiSettings,
-            userContext, progressProvider, guardLogin, templateSettings, SocialLoginViewModel, CheckPasswordViewModel,
-            validatedValue) {
+        'routing/guardRoute', 'templateSettings', './components/socialLogin/index', './components/checkPassword/index',
+        './helpers/validatedValue', 'limitAccess/accessLimiter', './helpers/initProgress'
+],
+    function (ko, _, router, eventManager, constants, xApiInitializer, context, xApiSettings,
+            userContext, progressProvider, guardRoute, templateSettings, SocialLoginViewModel, CheckPasswordViewModel,
+            validatedValue, accessLimiter, initProgress) {
 
         "use strict";
 
@@ -36,18 +36,19 @@ define(['knockout','underscore', 'plugins/router', 'eventManager', 'xApi/constan
         };
 
         var xApiEnabled = xApiSettings.xApi.enabled,
-            crossDeviceSavingEnabled = templateSettings.allowCrossDeviceSaving;
-            
-        viewmodel.loginEnabled = xApiEnabled || crossDeviceSavingEnabled;
-        viewmodel.courseTitle =  context.course.title;
+            crossDeviceSavingEnabled = templateSettings.allowCrossDeviceSaving,
+            accessLimitationEnabled = accessLimiter.accessLimitationEnabled();
+
+        viewmodel.loginEnabled = xApiEnabled || crossDeviceSavingEnabled || accessLimitationEnabled;
+        viewmodel.courseTitle = context.course.title;
         viewmodel.crossDeviceSavingEnabled = crossDeviceSavingEnabled && progressProvider.isInitialized;
         viewmodel.socialLoginEnabled = viewmodel.crossDeviceSavingEnabled && templateSettings.allowLoginViaSocialMedia;
         viewmodel.useEmail(!viewmodel.crossDeviceSavingEnabled || !viewmodel.socialLoginEnabled);
         viewmodel.skipAllowed = !xApiSettings.xApi.required;
-        viewmodel.username = validatedValue(function(value){
+        viewmodel.username = validatedValue(function (value) {
             return !!value();
         });
-        viewmodel.usermail = validatedValue(function(value){
+        viewmodel.usermail = validatedValue(function (value) {
             return !!value() && constants.patterns.email.test(value());
         });
 
@@ -55,13 +56,13 @@ define(['knockout','underscore', 'plugins/router', 'eventManager', 'xApi/constan
 
         //public methods
         function activate() {
-            if(!viewmodel.loginEnabled){
+            if (!viewmodel.loginEnabled) {
                 viewmodel.skip(); return;
             }
 
             var user = userContext.getCurrentUser();
 
-            if(user){
+            if (user) {
                 viewmodel.username(user.username);
                 viewmodel.usermail(user.email);
                 viewmodel.rememberMe(userContext.keepMeLoggedIn = true);
@@ -69,21 +70,21 @@ define(['knockout','underscore', 'plugins/router', 'eventManager', 'xApi/constan
             }
         }
 
-        function skip(){
+        function skip() {
             if (!viewmodel.skipAllowed && viewmodel.loginEnabled) {
                 return;
             }
-            guardLogin.removeGuard();
+            guardRoute.skipLoginGuard();
             progressProvider.deactivateProgressStorage();
             xApiInitializer.deactivate();
-            startCourse();
+            initProgress();
         }
 
-        function toggleRememberMe(){
+        function toggleRememberMe() {
             viewmodel.rememberMe(userContext.keepMeLoggedIn = !viewmodel.rememberMe());
         }
 
-        function toggleUseEmail(){
+        function toggleUseEmail() {
             viewmodel.useEmail(!viewmodel.useEmail());
             if (viewmodel.useEmail()) {
                 viewmodel.username.hasFocus(true);
@@ -91,26 +92,46 @@ define(['knockout','underscore', 'plugins/router', 'eventManager', 'xApi/constan
         }
 
         function register() {
-            if(isUserInputDataValid()){
+            if (isUserInputDataValid()) {
                 viewmodel.requestProcessing(true);
-                if(templateSettings.xApi.enabled){
-                    return initXAPI(function(){
-                        if(viewmodel.crossDeviceSavingEnabled){
+
+                if (!accessLimiter.userHasAccess({ email: viewmodel.usermail(), username: viewmodel.username() })) {
+                    startCourseAfterRegistration();
+                    return;
+                }
+
+                if (templateSettings.xApi.enabled) {
+                    return initXAPI(function () {
+                        if (viewmodel.crossDeviceSavingEnabled) {
                             return registerUserInProgressStorage();
                         }
-                        viewmodel.requestProcessing(false);
-                        guardLogin.removeGuard();
-                        startCourse();
+
+                        startCourseAfterRegistration();
                     });
                 }
-                return registerUserInProgressStorage();
+                if (viewmodel.crossDeviceSavingEnabled) {
+                    return registerUserInProgressStorage();
+                }
+
+                startCourseAfterRegistration();
             }
         }
 
         //private methods
+        function startCourseAfterRegistration() {
+            initializeUserContext();
+            viewmodel.requestProcessing(false);
+            startCourse();
+        }
+
         function startCourse() {
-            eventManager.courseStarted();
-            router.navigate('');
+            if (accessLimiter.userHasAccess({ email: viewmodel.usermail(), username: viewmodel.username() })) {
+                eventManager.courseStarted();
+                router.navigate('');
+                return;
+            }
+
+            router.navigate('noaccess');
         }
 
         function isUserInputDataValid() {
@@ -122,28 +143,32 @@ define(['knockout','underscore', 'plugins/router', 'eventManager', 'xApi/constan
             return false;
         }
 
-        function registerUserInProgressStorage(){
+        function registerUserInProgressStorage() {
             return progressProvider.register(viewmodel.usermail(), viewmodel.username(), context.course.title, viewmodel.rememberMe)
-                .then(function(response){
+                .then(function (response) {
                     if (_.isString(response.password)) {
                         userContext.user.password = response.password;
                     }
                     startCourse();
                 })
-                .fail(function(reason){
+                .fail(function (reason) {
                     if (reason.status == 409) {
                         viewmodel.userExists(true);
                     }
                 })
-                .done(function(){
-                    userContext.user.email = viewmodel.usermail();
-                    userContext.user.username = viewmodel.username();
+                .done(function () {
+                    initializeUserContext();
                     viewmodel.requestProcessing(false);
                 });
         }
 
-        function initXAPI(callback){
-            !_.isFunction(callback) && function(){};
+        function initXAPI(callback) {
+            !_.isFunction(callback) && function () { };
             return xApiInitializer.activate(viewmodel.username(), viewmodel.usermail()).then(callback);
+        }
+
+        function initializeUserContext() {
+            userContext.user.email = viewmodel.usermail();
+            userContext.user.username = viewmodel.username();
         }
     });

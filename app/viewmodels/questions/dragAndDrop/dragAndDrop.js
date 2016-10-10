@@ -1,67 +1,25 @@
 define(function () {
     "use strict";
 
-    var viewModel = {
-        question: null,
-	    content: null,
+    function DragAndDrop() {
+        this.question = null;
+	    this.content = null;
 
-        dropspots: [],
-        texts: [],
+        this.dropspots = [];
+        this.texts = [];
 
-        isAnswered: ko.observable(false),
-        submit: submit,
-        tryAnswerAgain: tryAnswerAgain,
+        this.isPreview = ko.observable(true);
 
-        initialize: initialize
+        this.isAnswered = ko.observable(false);
     };
 
-    return viewModel;
+    DragAndDrop.prototype.submit = function() {
+        var self = this;
 
-    function initialize(question) {
-        return Q.fcall(function () {
-            viewModel.question = question;
-            viewModel.content = question.content;
-
-            viewModel.isAnswered(question.isAnswered);
-            viewModel.dropspots = _.map(question.answers, function (answer) {
-                return {
-                    x: answer.correctPosition.x,
-                    y: answer.correctPosition.y,
-                    text: ko.observable(''),
-                    
-                };
-            });
-
-            viewModel.texts = _.map(_.shuffle(question.answers), function (answer) {
-                return {
-                    id: answer.id,
-                    text: answer.text,
-                    placed: ko.observable(false)
-                };
-            });
-
-            _.each(question.answers, function (answer) {
-                var selectedDropspot = _.find(viewModel.dropspots, function (dropspot) {
-                    return dropspot.x === answer.currentPosition.x
-                        && dropspot.y === answer.currentPosition.y;
-                });
-
-                if (selectedDropspot) {
-                    var selectedText = _.find(viewModel.texts, function (item) {
-                        return item.id === answer.id;
-                    });
-                    selectedText.placed(true);
-                    selectedDropspot.text(selectedText);
-                }
-            });
-        });
-    }
-
-    function submit() {
         return Q.fcall(function () {
             var answer = [];
 
-            _.each(viewModel.dropspots, function (dropspot) {
+            _.each(self.dropspots, function (dropspot) {
                 var text = dropspot.text();
                 if (text) {
                     answer.push({
@@ -72,21 +30,68 @@ define(function () {
                 }
             });
 
-            viewModel.question.submitAnswer(answer);
-            viewModel.isAnswered(true);
+            self.question.submitAnswer(answer);
+            self.isAnswered(true);
         });
-    }
+    };
 
-    function tryAnswerAgain() {
+    DragAndDrop.prototype.tryAnswerAgain = function() {
+        var self = this;
+        
         return Q.fcall(function () {
-            viewModel.isAnswered(false);
-            _.each(viewModel.dropspots, function (dropspot) {
+            self.isAnswered(false);
+            _.each(self.dropspots, function (dropspot) {
                 dropspot.text(undefined);
             });
-            _.each(viewModel.texts, function (answer) {
+            _.each(self.texts, function (answer) {
                 answer.dropSpot = {};
                 answer.placed(false);
             });
         });
-    }
+    };
+
+    DragAndDrop.prototype.initialize = function(question, isPreview) {
+        var self = this;
+        
+        return Q.fcall(function () {
+            self.question = question;
+            self.content = question.content;
+            self.isPreview(_.isUndefined(isPreview) ? false : isPreview);
+
+            self.isAnswered(question.isAnswered);
+            self.dropspots = _.map(question.answers, function (answer) {
+                return {
+                    x: answer.correctPosition.x,
+                    y: answer.correctPosition.y,
+                    text: ko.observable(''),
+                    
+                };
+            });
+
+            self.texts = _.map(_.shuffle(question.answers), function (answer) {
+                return {
+                    id: answer.id,
+                    text: answer.text,
+                    placed: ko.observable(false)
+                };
+            });
+
+            _.each(question.answers, function (answer) {
+                var selectedDropspot = _.find(self.dropspots, function (dropspot) {
+                    return dropspot.x === answer.currentPosition.x
+                        && dropspot.y === answer.currentPosition.y;
+                });
+
+                if (selectedDropspot) {
+                    var selectedText = _.find(self.texts, function (item) {
+                        return item.id === answer.id;
+                    });
+                    selectedText.placed(true);
+                    selectedDropspot.text(selectedText);
+                }
+            });
+        });
+    };
+
+    return DragAndDrop;
 });

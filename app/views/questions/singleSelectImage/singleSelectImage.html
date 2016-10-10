@@ -1,13 +1,14 @@
-﻿<section class="overlay-wrapper">
+﻿<section class="overlay-wrapper single-select-image-wrapper">
     <!-- ko if: content -->
     <div class="question-content-wrapper">
         <div class="question-content styled-content" data-bind="html: content, elementsWrap: {}"></div>
     </div>
     <!-- /ko -->
+    <!-- ko ifnot: isPreview -->
     <ul class="single-select-image" data-bind="foreach: answers, css:{canHover:canHover}">
         <li class="select-image" data-bind="css: { checked: id == $parent.checkedAnswerId(), enabled: !$parent.isAnswered() }">
             <div class="select-image-wrapper">
-                <div tabindex="0" class="preview-thumbnail" data-bind="click: $parent.checkItem, submitOnEnter, attr: { tabindex: $parent.isAnswered() ? '-1' : '0' }">   
+                <div tabindex="0" class="preview-thumbnail" data-bind="click: $parent.checkItem.bind($parent), submitOnEnter, attr: { tabindex: $parent.isAnswered() ? '-1' : '0' }">   
                     <img class="thumbnail" data-bind="attr:{'data-image': image, src: image + '?height=200&amp;width=250&amp;scaleBySmallerSide=true' }">
                 </div>
                 <div class="preview-button-holder">
@@ -16,7 +17,19 @@
             </div>
         </li>
     </ul>
-    <!-- ko if: isAnswered -->
+    <!-- /ko -->
+    <!-- ko if: isPreview -->
+    <ul class="single-select-image" data-bind="foreach: answers">
+        <li class="select-image" data-bind="css: { checked: id == $parent.checkedAnswerId() }">
+            <div class="select-image-wrapper">
+                <div class="preview-thumbnail">   
+                    <img class="thumbnail" data-bind="attr:{'data-image': image, src: image + '?height=200&amp;width=250&amp;scaleBySmallerSide=true' }">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <!-- /ko -->
+    <!-- ko if: isAnswered() || isPreview() -->
     <div class="question-overlay"></div>
     <!-- /ko -->
 </section>

@@ -1,45 +1,47 @@
 define(function () {
     "use strict";
 
-    var viewModel = {};
+    function HotSpot (){ }
 
-    viewModel.initialize = function(question) {
+    HotSpot.prototype.initialize = function(question, isPreview) {
+        var self = this;
+
         return Q.fcall(function (){
-            viewModel.content = question.content;
-            viewModel.background = question.background;
-            viewModel.isAnswered = ko.observable(question.isAnswered);
-            viewModel.isMultiple = question.isMultiple;
-            viewModel.question = question;
+            self.content = question.content;
+            self.background = question.background;
+            self.isAnswered = ko.observable(question.isAnswered);
+            self.isMultiple = question.isMultiple;
+            self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
+            self.question = question;
 
-                viewModel.submit = function () {         
+                self.submit = function () {         
                 return Q.fcall(function () {
-                        question.submitAnswer(viewModel.marks());             
-                        viewModel.isAnswered(true);
+                        question.submitAnswer(self.marks());             
+                        self.isAnswered(true);
                 });
                 };
-         
-                viewModel.marks = ko.observableArray(question.placedMarks ? _.map(question.placedMarks, function (mark) { return { x: mark.x, y: mark.y }; }) : []);
+        
+                self.marks = ko.observableArray(question.placedMarks ? _.map(question.placedMarks, function (mark) { return { x: mark.x, y: mark.y }; }) : []);
 
-            viewModel.addMark = function (mark) {
-                if (!viewModel.isMultiple) {
-                    viewModel.marks.removeAll();
+            self.addMark = function (mark) {
+                if (!self.isMultiple) {
+                    self.marks.removeAll();
                 }
-                viewModel.marks.push(mark);
+                self.marks.push(mark);
             };
 
-            viewModel.removeMark = function (mark) {
-                viewModel.marks.remove(mark);
+            self.removeMark = function (mark) {
+                self.marks.remove(mark);
             };
 
-            viewModel.tryAnswerAgain = function () {
+            self.tryAnswerAgain = function () {
                 return Q.fcall(function () {
-                    viewModel.isAnswered(false);
-                    viewModel.marks.removeAll();
+                    self.isAnswered(false);
+                    self.marks.removeAll();
                 });
             };
-
         });
-    }
-
-    return viewModel;
+    };
+    
+    return HotSpot;
 });

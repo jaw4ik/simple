@@ -37,9 +37,9 @@
 
                     routingManager.mapRoutes();
                     
-                    if (user && user.username && constants.patterns.email.test(user.email)) {
+                    if (user && user.username && (constants.patterns.email.test(user.email) || user.account)) {
                         var isCourseStarted = _.isObject(progress()) && _.isObject(progress().user);
-                        return activate(user.username, user.email).then(function () {
+                        return activate(user.username, user.email, user.account).then(function () {
                             if (!isCourseStarted) {
                                 return eventManager.courseStarted();
                             }
@@ -48,7 +48,7 @@
 
                     if (_.isObject(progress())) {
                         if (_.isObject(progress().user)) {
-                            return activate(progress().user.username, progress().user.email);
+                            return activate(progress().user.username, progress().user.email, progress().user.account);
                         }
                         if (progress().user === 0) {
                             deactivate();
@@ -59,8 +59,8 @@
             });
         }
 
-        function activate(username, email) {
-            var actor = activityProvider.createActor(username, email);
+        function activate(username, email, account) {
+            var actor = activityProvider.createActor(username, email, account);
 
             var id = context.course.id;
             var title = context.course.title;
@@ -80,10 +80,14 @@
             ]).spread(function () {
                 isInitialized = true;
                 statementQueueHandler.handle();
-                app.trigger('user:authenticated', {
+                var user = {
                     username: username,
-                    email: email
-                });
+                    email: email || account.name
+                };
+                if(account) {
+                    user.account = account;
+                }
+                app.trigger('user:authenticated', user);
             }).fail(function (reason) {
                 xApiInitializer.deactivate();
                 errorsHandler.handleError(reason);

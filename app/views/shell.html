@@ -56,8 +56,8 @@
             </div>
         </section>
     </section>
-    <section class="content-container">
-        <div id="content" class="content-wrapper" data-bind="css: { 'review-mode' : isInReviewMode }">
+    <section class="content-container" data-bind="css: { 'review-mode' : isInReviewMode }, css: 'module-' + cssName()">
+        <div id="content" class="content-wrapper">
             <!-- ko router: { cacheViews: false, transition: 'entrance' } -->
             <!-- /ko -->
         </div>

@@ -30,8 +30,8 @@ define(['modules/progress/index', 'userContext', 'browserSupport'], function (pr
     function activate(data) {
         if (data) {
             viewModel.close = data.close;
-            viewModel.exit = function (){
-                if (!viewModel.stayLoggedIn() && viewModel.isOnline) {
+            viewModel.exit = function () {
+                if (!viewModel.stayLoggedIn() && viewModel.isOnline && progressProvider.isInitialized) {
                     progressProvider.logOut();
                 }
                 data.exit();
@@ -40,7 +40,7 @@ define(['modules/progress/index', 'userContext', 'browserSupport'], function (pr
             viewModel.secretLinkCopied(false),
             viewModel.credentialsCopied(false),
             viewModel.stayLoggedIn(userContext.keepMeLoggedIn);
-            viewModel.progressStorageActivated = progressProvider.crossDeviceEnabled;
+            viewModel.progressStorageActivated = progressProvider.crossDeviceEnabled && progressProvider.isInitialized;
             viewModel.isOnline = progressProvider.isOnline;
             viewModel.authLink = progressProvider.authLink();
             viewModel.email = userContext.user.email;

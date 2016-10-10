@@ -2,7 +2,7 @@ define([
         'underscore', 'plugins/router', 'context', 'progressContext',
         'modules/progress/index', 'userContext', 'eventManager'
     ],
-    function(_, router, context, progressContext, progressProvider, userContext, eventManager) {
+    function(_, router, context, progressContext, progressModule, userContext, eventManager) {
         'use strict';
 
         return function() {
@@ -10,7 +10,7 @@ define([
                 progress = null,
                 isCourseStarted = false;
 
-            progressContext.use(progressProvider.progressProvider);
+            progressContext.use(progressModule.progressProvider);
 
             if (progressContext.ready()) {
                 user = userContext.getCurrentUser();

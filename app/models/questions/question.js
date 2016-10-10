@@ -19,6 +19,11 @@
         this.affectProgress = true;
         this.isInformationContent = spec.type === constants.questionTypes.informationContent;
 
+        if(spec.hasOwnProperty('isSurvey')){
+            this.isSurvey = spec.isSurvey;
+            this.affectProgress = !this.isSurvey;
+        }
+
         this.feedback = {
             hasCorrect: spec.hasCorrectFeedback,
             correct: null,
@@ -38,7 +43,7 @@
         this.learningContentExperienced = learningContentExperienced;
 
         this.progress = function (data) {
-            if (!this.affectProgress)
+            if (!this.affectProgress && !this.hasOwnProperty('isSurvey'))
                 return 0;
 
             if (!_.isNullOrUndefined(data)) {
@@ -52,12 +57,13 @@
         };
 
         this.submitAnswer = function () {
-            if (!this.affectProgress)
+            this.isAnswered = true;
+            
+            if (!this.affectProgress && !this.hasOwnProperty('isSurvey'))
                 return;
-
+                
             this.score(_protected.submit.apply(this, arguments));
 
-            this.isAnswered = true;
             this.isCorrectAnswered = this.score() === 100;
 
             eventManager.answersSubmitted(this, true);

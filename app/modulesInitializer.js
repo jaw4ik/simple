@@ -1,5 +1,5 @@
-﻿define(['moduleLoader', 'eventManager', 'progressContext'],
-    function(moduleLoader, eventManager, progressContext) {
+﻿define(['moduleLoader', 'eventManager', 'progressContext', 'userContext'],
+    function(moduleLoader, eventManager, progressContext, userContext) {
 
         "use strict";
 
@@ -67,6 +67,9 @@
 
                 if (_.isFunction(module.courseFinished)) {
                     eventManager.subscribeForEvent(eventManager.events.courseFinished).then(module.courseFinished);
+                }
+                if (_.isObject(module.userInfoProvider)) {
+                    userContext.use(module.userInfoProvider);
                 }
                 if (_.isObject(module.progressProvider)) {
                     progressContext.use(module.progressProvider);

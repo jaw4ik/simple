@@ -1,11 +1,12 @@
 <section class="overlay-wrapper">
-    <!-- ko if: content-->
+    <!-- ko if: content -->
     <div class="question-content-wrapper">
         <div class="question-content styled-content" data-bind="html: content, elementsWrap: {}"></div>
     </div>
     <!-- /ko -->
     <section class="drag-and-drop-text">
-        <div>
+        <div>            
+            <!-- ko if: !$root.isPreview() -->
             <div class="drag-and-drop-text-draggable-container" data-bind="draggableTextContainer: {}, scope: question.id">
                 <div class="drag-and-drop-text-draggable-container-message" data-translate-text="[drag and drop question all texts are placed]">
                     All texts are placed
@@ -16,13 +17,26 @@
                     </div>
                 </div>
                 <!-- /ko -->
-            </div>
+            </div>            
+            <!-- /ko -->
+            <!-- ko if: $root.isPreview -->
+            <div class="drag-and-drop-text-draggable-container" data-bind="visible: false">
+                <!-- ko foreach: texts -->
+                <div class="drag-and-drop-text-draggable">
+                    <div data-bind="text: _.isObject(text) ? text.text : text, attr: {title: _.isObject(text) ? text.text : text}">
+                    </div>
+                </div>
+                <!-- /ko -->
+            </div>            
+            <!-- /ko -->
             <div class="drag-and-drop-text-background-wrapper">
                 <div data-bind="background: question.background" class="drag-and-drop-text-background">
                     <!-- ko foreach: dropspots -->
                     <div class="drag-and-drop-text-dropspot" data-bind="dropspot: $data, scope: $parent.question.id">
+                        <!-- ko ifnot: $root.isPreview() || $root.isAnswered() -->
                         <div class="drag-and-drop-text-dropspot-tooltip-image">
                         </div>
+                        <!-- /ko -->
                     </div>
                     <!-- /ko -->
                 </div>
@@ -30,7 +44,7 @@
 
         </div>
     </section>
-    <!-- ko if: isAnswered -->
+    <!-- ko if: isAnswered() && !$root.isPreview() -->
     <div class="question-overlay"></div>
     <!-- /ko -->
 </section>

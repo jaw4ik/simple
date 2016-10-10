@@ -1,44 +1,45 @@
 ﻿define(function () {
     "use strict";
 
-    var viewModel = {
-        question: null,
+    function RankingText() {
+        this.question = null;
+        this.content = null;
 
-        content: null,
-        isAnswered: ko.observable(false),
-        rankingItems: ko.observableArray([]),
-
-        submit: submit,
-        tryAnswerAgain: tryAnswerAgain,
-
-        initialize: initialize
+        this.isAnswered = ko.observable(false);
+        this.rankingItems = ko.observableArray([]);
     };
 
-    return viewModel;
+    RankingText.prototype.initialize = function(question, isPreview) {
+        var self = this;
 
-    function initialize(question) {
         return Q.fcall(function () {
-            viewModel.question = question;
+            self.question = question;
 
-            viewModel.content = question.content;
-            viewModel.isAnswered(question.isAnswered);
+            self.content = question.content;
+            self.isAnswered(question.isAnswered);
 
-            viewModel.rankingItems(question.rankingItems);
+            self.rankingItems(question.rankingItems);
+            self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
         });
-    }
+    };
 
-    function submit() {
+    RankingText.prototype.submit = function() {
+        var self = this;
+
         return Q.fcall(function () {
-            viewModel.question.submitAnswer(viewModel.rankingItems());
+            self.question.submitAnswer(self.rankingItems());
 
-            viewModel.isAnswered(true);
+            self.isAnswered(true);
         });
-    }
+    };
 
-    function tryAnswerAgain() {
+    RankingText.prototype.tryAnswerAgain = function() {
+        var self = this;
+
         return Q.fcall(function () {
-
-            viewModel.isAnswered(false);
+            self.isAnswered(false);
         });
-    }
+    };
+
+    return RankingText;    
 });

@@ -19,13 +19,13 @@ define(['knockout', 'durandal/composition'], function (ko, composition) {
                         return;
                     }
 
-                    $(element).width(ui.helper.outerWidth());
+                    $(element).css('min-width', ui.helper.outerWidth());
                     $(element).height(ui.helper.outerHeight());
 
-                })
-                .on('dragstop', function (event, ui) {
+                });
+                $('html').on('mouseup', function (event, ui) {
                     $(element).removeClass('active');
-                    $(element).css('width', '');
+                    $(element).css('min-width', '');
                     $(element).css('height', '');
                     $(this).closest('.drag-and-drop-text-dropspot').addClass('dropped');
                 });

@@ -122,5 +122,7 @@
     "[keep me logged-in for the next courses]": "Ingelogd blijven voor de volgende cursus",
     "[please close the browser tab now]": "Sluit het venster",
     "[finish course when tracking disabled]": "Cursus afronden",
-    "[ok finish course]": "Ok,rond de cursus af"
+    "[ok finish course]": "Ok,rond de cursus af",
+    "[the owner of the course has limited the access]": "De eigenaar van de cursus heeft de toegang beperkt",
+    "[back to sign in]": "Terug naar inloggen"
 }

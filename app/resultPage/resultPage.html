@@ -1,0 +1,63 @@
+<div class="result-header">
+    <div class="course-title">
+        <span class="course-title-label" data-translate-text="[course]"></span>
+        <span class="course-title-value" data-bind='fontScale: "\"" + title + "\""'>""</span>
+    </div>
+    <div class="overall-progress-wrapper">
+        <div class="overall-progress">
+            <div class="overall-progress-progressbar-wrapper">
+                <div class="overall-progress-progressbar">
+                    <canvas class="overall-progress-progressbar-canvas canvas-styles result" width="159" height="159" data-bind="circleProgress: { progress: score(), lineWidth:3,radius:75, masteryScore:masteryScore, completed: true }"></canvas>
+                    <div class="overall-progress-progressbar-text" data-bind="text: score()">0</div>
+                </div>
+            </div>
+        </div>
+    </div>		
+    <div class="result-buttons">
+        <!-- ko if: finish -->
+        <span class="button-wrapper" data-bind="autofocus">
+            <span class="button-wrapper">
+                <button class="button block default cancel" data-bind="click: close" data-translate-text="[continue course]" data-translate-title="[continue course]"></button>
+            </span>
+            <!-- ko if: !xAPIEnabled || scormEnabled -->
+            <button class="button block primary autofocus submit" data-bind="click: finish"
+                    data-translate-text="[finish course]"
+                    data-translate-title="[finish course]"></button>
+            <!-- /ko -->
+            <!-- ko if: xAPIEnabled && !scormEnabled -->
+                <!-- ko if: stayLoggedIn -->                    
+                <button class="button block primary autofocus submit" data-bind="click: finish" data-translate-text="[finish course]" data-translate-title="[finish course]"></button>
+                <!-- /ko -->
+                <!-- ko ifnot: stayLoggedIn -->                    
+                <button class="button block primary autofocus submit" data-bind="click: finish" data-translate-text="[submit results and logout]" data-translate-title="[submit results and logout]"></button>
+                <!-- /ko -->
+            <!-- /ko -->
+        </span>
+        <!-- /ko -->
+    </div>
+    <!-- ko if: crossDeviceEnabled && !scormEnabled -->
+    <button class="button check small mb10" type="submit" data-bind="click: toggleStayLoggedIn, css: { active: stayLoggedIn }">
+        <span data-translate-text="[keep me logged-in for the next courses]" data-translate-title="[keep me logged-in for the next courses]"></span>
+    </button>
+    <!-- /ko -->
+</div>
+<div class="result-page-content" data-bind="foreach: sections">
+    <div class="section noselect">
+        <div class="section-header" data-bind="css: {correct: score >= $parent.masteryScore, wrong: score < $parent.masteryScore}">
+            <div class="section-header-wrapper">
+                <div class="section-header-label" data-translate-text="[section]" data-bind="attr: {'data-index': ' ' + ($parent.sections.indexOf($data) + 1)}"></div>
+                <div class="section-header-title" data-bind="text: title"></div>
+                <div class="section-header-analytic" data-bind="css: {'icon-correct_check': score >= $parent.masteryScore, 'icon-incorrect_cross': score < $parent.masteryScore}">
+                    <div class="section-header-correct" data-bind="attr: {'data-count': correctQuestions + '/' + amountQuestions}" data-translate-text="[questions correct]"></div>
+                    <div class="section-header-content-readed" data-bind="attr: {'data-count': readedContents + '/' + amountContents}" data-translate-text="[contents readed]"></div>
+                </div>
+            </div>
+        </div>
+        <div class="section-content">
+        <!-- ko foreach: questions -->    
+            <!-- ko compose: { model: 'questionContent/questionContent', activationData: [ $parent.id, $data, ($parent.questions.indexOf($data) + 1), true ] } --><!-- /ko -->
+        <!-- /ko -->
+        </div>
+    </div>
+</div>    
+<div class="result-page-go-top noselect icon-up_arrow" data-bind="scrollTop: 1000"></div>                            

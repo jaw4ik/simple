@@ -1,26 +1,37 @@
 ﻿define(function() {
     "use strict";
 
-    var viewModel = {
-        question: null,
-        content: null,
-        statements: null,
-        isAnswered: ko.observable(false),
-
-        initialize: initialize,
-        submit: submit,
-        tryAnswerAgain: tryAnswerAgain,
-        markStatementAsTrue: markStatementAsTrue,
-        markStatementAsFalse: markStatementAsFalse
+    function Statement() {
+        this.question = null;
+        this.content = null;
+        this.statements = null;
+        this.isAnswered = ko.observable(false);
+        this.isSurveyModeEnabled = false;
     };
 
-    return viewModel;
+    Statement.prototype.markStatementAsTrue = function(statement) {
+        if (this.isAnswered()) {
+            return;
+        }
 
-    function initialize(question) {
-        viewModel.question = question;
-        viewModel.content = question.content;
-        viewModel.isAnswered(question.isAnswered);
-        viewModel.statements = _.map(question.statements, function(statement) {
+        statement.userAnswer(true);
+    };
+
+    Statement.prototype.markStatementAsFalse = function(statement) {
+        if (this.isAnswered()) {
+            return;
+        }
+
+        statement.userAnswer(false);
+    };
+
+    Statement.prototype.initialize = function(question, isPreview) {
+        this.question = question;
+        this.isSurveyModeEnabled = !!question.isSurvey;
+        this.content = question.content;
+        this.isAnswered(question.isAnswered);
+        this.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
+        this.statements = _.map(question.statements, function(statement) {
             var result = {
                 id: statement.id,
                 text: statement.text,
@@ -37,11 +48,13 @@
 
             return result;
         });
-    }
+    };
 
-    function submit() {
+    Statement.prototype.submit = function() {
+        var self = this;
+
         return Q.fcall(function() {
-            var userAnswers = _.chain(viewModel.statements)
+            var userAnswers = _.chain(self.statements)
                 .filter(function(statement) {
                     return !_.isNullOrUndefined(statement.userAnswer());
                 })
@@ -50,33 +63,21 @@
                 })
                 .value();
 
-            viewModel.question.submitAnswer(userAnswers);
-            viewModel.isAnswered(true);
+            self.question.submitAnswer(userAnswers);
+            self.isAnswered(true);
         });
-    }
+    };
 
-    function tryAnswerAgain() {
+    Statement.prototype.tryAnswerAgain = function() {
+        var self = this;
+        
         return Q.fcall(function() {
-            viewModel.isAnswered(false);
-            _.each(viewModel.statements, function(statement) {
+            self.isAnswered(false);
+            _.each(self.statements, function(statement) {
                 statement.userAnswer(null);
             });
         });
-    }
+    };
 
-    function markStatementAsTrue(statement) {
-        if (viewModel.isAnswered()) {
-            return;
-        }
-
-        statement.userAnswer(true);
-    }
-
-    function markStatementAsFalse(statement) {
-        if (viewModel.isAnswered()) {
-            return;
-        }
-
-        statement.userAnswer(false);
-    }
+    return Statement;
 });

@@ -1,9 +1,10 @@
 ﻿<section class="textmatching overlay-wrapper">
     <!-- ko if: content -->
-    <div class="question-content">
+    <div class="question-content-wrapper">
         <div class='styled-content' data-bind="html: content,wrapElements:content"></div>
     </div>
     <!-- /ko -->
+    <!-- ko ifnot: isPreview-->
     <div data-bind="overlay: isAnswered, syncHeight: {}">
         <div class="text-matching-caption" data-translate-text="[text matching question hint]">
             Drag items from right column to the left to match the pairs
@@ -56,7 +57,56 @@
         </div>
         <!-- /ko -->
     </div>
-    <!-- ko if: isAnswered -->
+    <!-- /ko -->
+    <!-- ko if: isPreview-->
+    <div data-bind="syncHeight: {}">
+        <!-- ko foreach: sources-->
+        <div class="text-matching-row">
+            <div class="text-matching-column">
+                <div class="text-matching-source-wrapper">
+                    <div class="text-matching-source">
+                        <div class="text-matching-source-text-wrapper">
+                            <div class="text-matchig-source-text" data-bind="text: key"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-matching-column">
+                <div class="text-matching-target-placeholder-wrapper">
+                    <div class="text-matching-target-placeholder">
+                    </div>
+                    <!-- ko if: value -->
+                    <!-- ko with: value -->
+                    <div class="text-matching-target">
+                        <div class="text-matching-target-text-wrapper">
+                            <div class="text-matching-target-text" data-bind="text: $data"></div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                </div>
+            </div>
+            <div class="text-matching-column empty">&nbsp;</div>
+            <!-- ko with: $parent.targets()[$index()] -->
+            <div class="text-matching-column">
+                <!-- ko if: value -->
+                <!-- ko with: value -->
+                <div class="text-matching-target-wrapper">
+                    <div class="text-matching-target">
+                        <div class="text-matching-target-text-wrapper">
+                            <div class="text-matching-target-text" data-bind="text: $data"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /ko -->
+                <!-- /ko -->
+            </div>
+            <!-- /ko -->
+        </div>
+        <!-- /ko -->
+    </div>
+    <!-- /ko -->
+    <!-- ko if: isAnswered() || isPreview() -->
     <div class="question-overlay"></div>
     <!-- /ko -->
 </section>

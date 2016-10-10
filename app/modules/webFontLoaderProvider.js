@@ -11,7 +11,7 @@
         manifestReader.readManifest().then(function(manifest) {
             var familiesToLoad = _.chain(fonts)
                 .map(function(font) {
-                    return font.fontFamily
+                    return font.fontFamily;
                 })
                 .uniq()
                 .without('Arial', 'Times new roman', 'Verdana') //filter font families that are available in all supported browsers
@@ -22,7 +22,7 @@
             }
 
             familiesToLoad = familiesToLoad.map(function(font) {
-                return { "fontFamily": font, "variants": ["400"] };
+                return { "fontFamily": font, "variants": ["300","400"] };
             });
 
             _.each(_.filter(manifest.fonts, function(font) { return !font.local; }), function(font) {
@@ -30,17 +30,17 @@
                 if (fontToLoad) {
                     fontToLoad.variants = _.union(fontToLoad.variants, font.variants);
                 } else {
-                    familiesToLoad.push({ "fontFamily": font.fontFamily, "variants": font.variants })
+                    familiesToLoad.push({ "fontFamily": font.fontFamily, "variants": font.variants });
                 }
             });
 
             var fontLoaderConfig = {
                 active: function() {
-                    defer.resolve()
+                    defer.resolve();
                 },
                 inactive: function() {
                     //added to make possible ofline template loading
-                    defer.resolve()
+                    defer.resolve();
                 }
             };
 

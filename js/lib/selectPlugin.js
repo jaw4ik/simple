@@ -64,8 +64,8 @@
                 .css({
                     position: 'absolute',
                     left: ($element.offset().left - 5) + 'px',
-                    top: ($element.offset().top + $element.height()) + 'px',
-                    width: ($element.width() + 45) + 'px'
+                    top: ($element.offset().top + $element.outerHeight()) + 'px',
+                    width: ($element.outerWidth() + 45) + 'px'
                 })
                 .append($('<ul tabindex="-1"/>')
                     .on('click', 'li', function () {

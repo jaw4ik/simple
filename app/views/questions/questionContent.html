@@ -34,7 +34,7 @@
         </div>
         <!-- /ko -->
         <!-- ko if: submitViewModel -->
-        <!-- ko compose: { model: submitViewModel, activationData: { submit: submit } } --><!-- /ko-->
+        <!-- ko compose: { model: submitViewModel, activationData: { submit: submit.bind($root) } } --><!-- /ko-->
         <!-- /ko -->
         <!-- /ko -->
     </section>

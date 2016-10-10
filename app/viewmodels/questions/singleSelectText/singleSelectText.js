@@ -1,31 +1,39 @@
 ﻿define(function () {
     "use strict";
 
-    var viewModel = {
-        question: null,
+    function SingleSelectText() {
+        this.question = null;
 
-        content: null,
-        isAnswered: ko.observable(false),
-        answers: null,
+        this.content = null;
+        this.isAnswered = ko.observable(false);
+        this.answers = null;
+        this.isSurveyModeEnabled = false;
+    };   
 
-        checkItem: checkItem,
+    SingleSelectText.prototype.checkItem = function (item) {
+            if (this.isAnswered()) {
+                return;
+            }
 
-        submit: submit,
-        tryAnswerAgain: tryAnswerAgain,
+            _.each(this.answers, function(answer) {
+                answer.isChecked(false);
+            });
 
-        initialize: initialize
-    };
+            item.isChecked(true);
+        };
+        
+    SingleSelectText.prototype.initialize = function (question, isPreview) {
+        var self = this;
 
-    return viewModel;
-
-    function initialize(question) {
         return Q.fcall(function () {
-            viewModel.question = question;
+            self.question = question;
 
-            viewModel.content = question.content;
-            viewModel.isAnswered(question.isAnswered);
+            self.isSurveyModeEnabled = !!question.isSurvey;
+            self.content = question.content;
+            self.isAnswered(question.isAnswered);
+            self.isPreview = ko.observable(_.isUndefined(isPreview) ? false : isPreview);
 
-            viewModel.answers = _.map(question.answers, function (answer) {
+            self.answers = _.map(question.answers, function (answer) {
                 return {
                     id: answer.id,
                     text: answer.text,
@@ -33,42 +41,36 @@
                 };
             });
         });
-    }
+    };
 
-    function checkItem(item) {
-        if (viewModel.isAnswered()) {
-            return;
-        }
-
-        _.each(viewModel.answers, function(answer) {
-            answer.isChecked(false);
-        });
-
-        item.isChecked(true);
-    }
-
-    function submit() {
+    SingleSelectText.prototype.submit = function() {
+        var self = this;
+        
         return Q.fcall(function () {
-            viewModel.question.submitAnswer(
-				_.chain(viewModel.answers)
-				.filter(function (item) {
-				    return item.isChecked();
-				})
-				.map(function (item) {
-				    return item.id;
-				}).value());
+            self.question.submitAnswer(
+                _.chain(self.answers)
+                .filter(function (item) {
+                    return item.isChecked();
+                })
+                .map(function (item) {
+                    return item.id;
+                }).value());
 
-            viewModel.isAnswered(true);
+            self.isAnswered(true);
         });
-    }
+    };
 
-    function tryAnswerAgain() {
+    SingleSelectText.prototype.tryAnswerAgain = function() {
+        var self = this;
+        
         return Q.fcall(function () {
-            _.each(viewModel.answers, function (answer) {
+            _.each(self.answers, function (answer) {
                 answer.isChecked(false);
             });
 
-            viewModel.isAnswered(false);
+            self.isAnswered(false);
         });
-    }
+    };
+
+    return SingleSelectText;
 });

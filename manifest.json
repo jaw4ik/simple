@@ -60,6 +60,14 @@
             {
               "key": "@content-body-color",
               "value": "#fff"
+            },
+            {
+              "key": "@correct-color",
+              "value": "#4caf50"
+            },
+            {
+              "key": "@incorrect-color",
+              "value": "#f16162"
             }
           ],
           "background": {
@@ -198,6 +206,14 @@
             {
               "key": "@content-body-color",
               "value": "#232323"
+            },
+            {
+              "key": "@correct-color",
+              "value": "#4caf50"
+            },
+            {
+              "key": "@incorrect-color",
+              "value": "#f16162"
             }
           ],
           "background": {
@@ -336,6 +352,14 @@
             {
               "key": "@content-body-color",
               "value": "#fff"
+            },
+            {
+              "key": "@correct-color",
+              "value": "#3fe471"
+            },
+            {
+              "key": "@incorrect-color",
+              "value": "#ff6047"
             }
           ],
           "background": {
@@ -474,6 +498,14 @@
             {
               "key": "@content-body-color",
               "value": "#fff"
+            },
+            {
+              "key": "@correct-color",
+              "value": "#349b79"
+            },
+            {
+              "key": "@incorrect-color",
+              "value": "#d64869"
             }
           ],
           "background": {
@@ -613,6 +645,14 @@
             {
               "key": "@content-body-color",
               "value": "#fff"
+            },
+            {
+              "key": "@correct-color",
+              "value": "#4caf50"
+            },
+            {
+              "key": "@incorrect-color",
+              "value": "#f16162"
             }
           ],
           "background": {

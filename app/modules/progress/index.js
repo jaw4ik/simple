@@ -56,16 +56,16 @@ define([
             return defer.promise;
 
             function resolvePromise(user) {
-                defer.resolve(user)
+                defer.resolve(user);
             }
         };
 
         this.syncProviders = function() {
             var that = this;
             return _private.progressProviders.progressStorage.getProgress()
-                .then(function(response) {
+                .then(function (response) {
+                    _private.progressProviders.localStorage.removeProgress();
                     if(_.isNull(response.progress) || _.isEmpty(response.progress)){
-                        _private.progressProviders.localStorage.removeProgress();
                         if (response.email){
                             authenticate(response.email, response.name, true);
                             _private.userEmail = response.email;
@@ -150,8 +150,8 @@ define([
         };
 
         this.logOut = function() {
-            if(_private.localStorageProvider){
-                _private.localStorageProvider.removeProgress();
+            if (_private.progressProviders.localStorage) {
+                _private.progressProviders.localStorage.removeProgress();
             }
             authProvider.logOut();
         };
@@ -174,11 +174,11 @@ define([
     }
 
     function getProgress() {
-        return _private.progressProviders.localStorage.getProgress();
+        return _private.progressProviders.localStorage ? _private.progressProviders.localStorage.getProgress() : {};
     }
 
     function saveProgress(progress) {
-        return _private.executeFuncInProviders('saveProgress', progress, _private.userEmail)
+        return _private.executeFuncInProviders('saveProgress', progress, _private.userEmail);
     }
 
     function saveResults() {

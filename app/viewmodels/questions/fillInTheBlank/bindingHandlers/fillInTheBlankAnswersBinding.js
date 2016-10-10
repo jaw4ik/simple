@@ -42,12 +42,13 @@
             } else {
                 _.each(inputValues, function (blank) {
                     var $source = $('[data-group-id=' + blank.id + ']', $element);
+                    var defaultText = '...';
 
                     if ($source.is('input')) {
-                        $source.val(blank.value);
+                        $source.val(blank.value || defaultText);
                         $source.attr('disabled', 'disabled');
                     } else if ($source.is('select')) {
-                        $source.select('updateValue', blank.value);
+                        $source.select('updateValue', blank.value || defaultText);
                         $source.select('enabled', false);
                     }
                 });

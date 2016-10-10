@@ -4,17 +4,35 @@
         <div class="question-content styled-content" data-bind="html: content, elementsWrap: {}"></div>
     </div>
     <!-- /ko -->
+    <!-- ko ifnot: isPreview() -->
     <div class="scenario-question-container">
+        <!-- ko if: !isAnswered() -->
         <div class="scenario-question" data-bind="html: embedCode"></div>
-        <!-- ko if: isAnswered -->
+        <!-- /ko -->
+        <!-- ko if: isAnswered() -->
         <div class="scenario-question-overlay">
             <div class="scenario-question-overlay-container">
-                <span class="scenario-question-overlay-text" data-translate-text="[scenario has been submitted]" data-translate-title="[scenario has been submitted]"></span>    
+                <!-- ko if: isAnswered -->
+                <span class="scenario-question-overlay-text" data-translate-text="[scenario has been submitted]" data-translate-title="[scenario has been submitted]"></span>
+                <!-- /ko --> 
             </div>
         </div>
         <!-- /ko -->
     </div>
-    <!-- ko if: isAnswered -->
+    <!-- /ko -->
+    <!-- ko if: !isAnswered() && isPreview() -->
+    <div class="question-result-block incorrect" data-translate-text="[scenario has not been finished yet]" data-translate-title="[scenario has not been finished yet]">Scenario has NOT been finished yet</div>       
+    <!-- /ko -->
+    <!-- ko if: isAnswered() && isPreview() -->
+    <!-- ko if: isCorrect -->
+    <div class="question-result-block" data-translate-text="[scenario has been passed successfully]" data-translate-title="[scenario has been passed successfully]">Scenario has been passed successfully</div>      
+    <!-- /ko -->
+    <!-- ko ifnot: isCorrect -->
+    <div class="question-result-block incorrect" data-translate-text="[scenario has not been passed successfully]" data-translate-title="[scenario has not been passed successfully]">Scenario has NOT been passed successfully</div>      
+    <!-- /ko -->
+    <!-- /ko -->
+
+    <!-- ko if: isAnswered() || isPreview() -->
     <div class="question-overlay"></div>
     <!-- /ko -->
 </section>

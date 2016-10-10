@@ -1,9 +1,14 @@
-﻿<!-- ko if: content -->
+
+<div class="statement-content">
+<!-- ko if: content -->
 <div class="question-content-wrapper">
     <div class="question-content styled-content" data-bind="html: content, elementsWrap: {}"></div>
 </div>
 <!-- /ko -->
-<!-- ko if: statements().length -->
+<!-- ko if: isSurveyModeEnabled -->
+<div class="text-matching-caption" data-translate-text="[survey mode caption]"></div>
+<!-- /ko -->
+<!-- ko if: statements.length -->
 <ul class="statement">
     <li class="statement-headers-group">
         <div class="statement-option" data-translate-text="[statement question true text]" data-translate-title="[statement question true tooltip]">
@@ -13,12 +18,12 @@
             False
         </div>
     </li>
-
+    <!-- ko ifnot: isPreview() -->
     <!-- ko foreach: statements -->
     <li class="statement-item" data-bind="css:{ enabled: !$parent.isAnswered(), checked: isTrueChecked() || isFalseChecked() }">
         <span class="statement-option ">
             <span class="radio-icon-wrapper">
-                <button class="radio-icon" data-bind="click:$parent.markStatementAsTrue, css: { checked: isTrueChecked() }, attr:{ disabled: $parent.isAnswered() }"></button>
+                <button class="radio-icon" data-bind="click:$parent.markStatementAsTrue.bind($parent), css: { checked: isTrueChecked() }, attr:{ disabled: $parent.isAnswered() }"></button>
             </span>
         </span>
         <span class="statement-option-separator-wrapper">
@@ -26,11 +31,37 @@
         </span>
         <span class="statement-option">
             <span class="radio-icon-wrapper">
-                <button class="radio-icon checked" data-bind="click:$parent.markStatementAsFalse, css: { checked: isFalseChecked() }, attr:{ disabled: $parent.isAnswered() }"></button>
+                <button class="radio-icon checked" data-bind="click:$parent.markStatementAsFalse.bind($parent), css: { checked: isFalseChecked() }, attr:{ disabled: $parent.isAnswered() }"></button>
             </span>
         </span>
         <span class="statement-label" data-bind="text: text"></span>
     </li>
     <!-- /ko -->
-</ul>
-<!-- /ko -->
+    <!-- /ko -->
+
+    <!-- ko if: isPreview() -->
+    <!-- ko foreach: statements -->
+    <li class="statement-item" data-bind="css:{ checked: isTrueChecked() || isFalseChecked() }">
+        <span class="statement-option ">
+            <span class="radio-icon-wrapper">
+                <button class="radio-icon" data-bind="css: { checked: isTrueChecked() }" disabled="disabled"></button>
+            </span>
+        </span>
+        <span class="statement-option-separator-wrapper">
+            <span class="statement-option-separator"></span>
+        </span>
+        <span class="statement-option">
+            <span class="radio-icon-wrapper">
+                <button class="radio-icon checked" disabled="disabled" data-bind="css: { checked: isFalseChecked() }"></button>
+            </span>
+        </span>
+        <span class="statement-label" data-bind="text: text"></span>
+    </li>
+    <!-- /ko -->
+    <!-- /ko -->
+    </ul>
+    <!-- /ko -->
+    <!-- ko if: isAnswered() || isPreview() -->
+    <div class="question-overlay" data-bind="visible: isAnswered() || isPreview()"></div>
+    <!-- /ko -->
+</div>

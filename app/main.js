@@ -15,8 +15,9 @@ define('underscore', function () { return _; });
 define('perfectScrollbar', function () { return Ps; });
 
 
-define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/router', 'modulesInitializer', 'bootstrapper', 'templateSettings', 'settingsReader', 'translation', 'modules/webFontLoaderProvider'],
-    function(app, viewLocator, system, router, modulesInitializer, bootstrapper, templateSettings, settingsReader, translation, webFontLoader) {
+define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/router', 'modulesInitializer', 'bootstrapper', 'templateSettings',
+    'settingsReader', 'translation', 'modules/webFontLoaderProvider', 'limitAccess/accessLimiter'],
+    function (app, viewLocator, system, router, modulesInitializer, bootstrapper, templateSettings, settingsReader, translation, webFontLoader, accessLimiter) {
         app.title = 'easygenerator';
 
         system.debug(false);
@@ -47,10 +48,16 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/rout
             });
 
             function loadIncludedModules() {
-                return settingsReader.readPublishSettings().then(function(settings) {
-                    _.each(settings.modules, function(module) {
+                return settingsReader.readPublishSettings().then(function (settings) {
+                    var hasLmsModule = false;
+                    _.each(settings.modules, function (module) {
                         modules['../includedModules/' + module.name] = true;
+                        if (module.name === 'lms') {
+                            hasLmsModule = true;
+                        }
                     });
+
+                    accessLimiter.initialize(settings.accessLimitation, hasLmsModule);
                 });
             }
 

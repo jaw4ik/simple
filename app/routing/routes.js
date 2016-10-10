@@ -16,6 +16,13 @@
             hideExitButton: true
         },
         {
+            route: 'noaccess',
+            moduleId: 'limitAccess/noAccess',
+            title: 'Limited access',
+            rootLinkDisabled: true,
+            hideExitButton: true
+        },
+        {
             route: 'sections',
             moduleId: 'viewmodels/sections',
             title: 'Sections',
@@ -28,6 +35,13 @@
             moduleId: 'viewmodels/questions/content',
             title: 'Question',
             displayTreeOfContent: true
+        },
+        {
+            route: 'finish',
+            moduleId: 'resultPage/resultPage',
+            title: 'Results',
+            rootLinkDisabled: true,
+            hideExitButton: true
         },
         {
             route: '404(/:url)',

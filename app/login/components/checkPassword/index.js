@@ -16,7 +16,7 @@ define([
                 var that = this;
                 return progressProvider.syncProviders().then(function(){
                     if (templateSettings.xApi.enabled) {
-                        return xApiInitializer.activate(username(), that.usermail()).then(function() {
+                        return xApiInitializer.activate(that.username(), that.usermail()).then(function() {
                             return initProgress();
                         });
                     } else {

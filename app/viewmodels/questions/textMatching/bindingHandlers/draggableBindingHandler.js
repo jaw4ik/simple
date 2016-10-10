@@ -3,7 +3,8 @@
     ko.bindingHandlers.draggable = {
         init: function (element, valueAccessor, allBindingsAccessor) {
             var allBindings = allBindingsAccessor();
-
+			
+			$(element).css('touch-action','none');
             $(element).draggable({
                 appendTo: '.application-wrapper',
                 containment: '.application-wrapper',

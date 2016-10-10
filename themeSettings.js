@@ -23,6 +23,14 @@
             {
                 "key": "@content-body-color",
                 "value": "#fff"
+            },
+            {
+                "key": "@correct-color",
+                "value": "#4caf50"
+            },
+            {
+                "key": "@incorrect-color",
+                "value": "#f16162"
             }
           ],
           "background": {
